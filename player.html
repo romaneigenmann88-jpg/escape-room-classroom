@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Escape Room - Spieler</title>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #fff; min-height: 100vh; min-height: -webkit-fill-available;
+            padding: 15px; display: flex; flex-direction: column;
+        }
+
+        .container {
+            max-width: 500px; margin: 0 auto; width: 100%;
+            flex: 1; display: flex; flex-direction: column;
+        }
+
+        header {
+            text-align: center; margin-bottom: 15px; padding: 15px;
+            background: rgba(255,255,255,0.06); backdrop-filter: blur(12px);
+            border-radius: 18px; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h1 {
+            font-size: 1.8em; margin-bottom: 6px;
+            background: linear-gradient(45deg, #00d4ff, #7b2ff7, #ff6bcb);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .status { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 8px; }
+
+        .status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #ef4444; animation: pulse 2s infinite;
+        }
+        .status-dot.connected { background: #4ade80; }
+
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        .screen { display: none; flex-direction: column; flex: 1; }
+        .screen.active { display: flex; }
+
+        /* Join Screen */
+        .join-container {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; gap: 18px;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 1.05em; font-weight: 500; }
+
+        input[type="text"] {
+            padding: 16px; font-size: 1.1em;
+            border: 2px solid rgba(255,255,255,0.2); border-radius: 14px;
+            background: rgba(255,255,255,0.1); color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        input::placeholder { color: rgba(255,255,255,0.4); }
+        input:focus { outline: none; border-color: #00d4ff; }
+
+        button {
+            padding: 16px; font-size: 1.1em; font-weight: 700;
+            border: none; border-radius: 14px; cursor: pointer;
+            transition: all 0.2s; letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00d4ff, #7b2ff7); color: white;
+            text-transform: uppercase; font-size: 1.2em;
+        }
+        .btn-primary:active { transform: scale(0.97); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Waiting Screen */
+        .waiting-container {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; gap: 25px;
+        }
+
+        .spinner {
+            width: 50px; height: 50px;
+            border: 4px solid rgba(255,255,255,0.2); border-top-color: #00d4ff;
+            border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .waiting-message { font-size: 1.2em; color: #aaa; }
+
+        /* Game Screen */
+        .game-container { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+
+        .team-badge {
+            padding: 12px; border-radius: 14px; text-align: center;
+            font-size: 1.2em; font-weight: bold; border: 3px solid;
+            background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
+        }
+
+        .room-info {
+            padding: 16px; background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(10px); border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .room-title { font-size: 1.3em; font-weight: bold; margin-bottom: 8px; }
+
+        .room-meta {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9em; color: #aaa;
+        }
+
+        .clue-box {
+            padding: 18px; border-radius: 14px;
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(123,47,247,0.1));
+            border: 2px solid rgba(0,212,255,0.3);
+        }
+
+        .clue-label {
+            font-size: 0.85em; color: #00d4ff;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+        }
+
+        .clue-text { font-size: 1.15em; line-height: 1.5; }
+
+        .answer-section {
+            padding: 16px; background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(10px); border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .answer-input {
+            width: 100%; padding: 16px; font-size: 1.3em;
+            text-align: center; text-transform: uppercase;
+            font-weight: bold; margin-bottom: 12px;
+            border: 2px solid rgba(255,255,255,0.2); border-radius: 14px;
+            background: rgba(255,255,255,0.1); color: white;
+        }
+
+        .answer-buttons { display: flex; gap: 10px; }
+
+        .submit-btn {
+            flex: 1; background: linear-gradient(45deg, #4ade80, #22c55e);
+            padding: 16px; font-size: 1.2em; color: white; text-transform: uppercase;
+        }
+        .submit-btn:active { transform: scale(0.97); }
+
+        .hint-btn {
+            background: rgba(245,158,11,0.2); color: #f59e0b;
+            border: 2px solid #f59e0b; padding: 16px; min-width: 60px;
+            font-size: 1.1em;
+        }
+        .hint-btn:active { transform: scale(0.97); }
+        .hint-btn:disabled { opacity: 0.3; }
+
+        .feedback {
+            padding: 14px; border-radius: 12px; text-align: center;
+            font-size: 1.05em; font-weight: 600; margin-top: 12px;
+            animation: feedbackIn 0.3s;
+        }
+
+        @keyframes feedbackIn {
+            from { transform: translateY(-8px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .feedback.correct { background: rgba(74,222,128,0.2); border: 2px solid #4ade80; color: #4ade80; }
+        .feedback.incorrect { background: rgba(239,68,68,0.2); border: 2px solid #ef4444; color: #ef4444; }
+        .feedback.hint-msg { background: rgba(245,158,11,0.15); border: 2px solid #f59e0b; color: #f59e0b; }
+
+        /* Room transition */
+        .room-transition {
+            animation: roomSlideIn 0.5s ease-out;
+        }
+
+        @keyframes roomSlideIn {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Victory Screen */
+        .victory-container {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; gap: 18px;
+        }
+
+        .victory-icon { font-size: 4em; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+
+        .victory-title { font-size: 2.2em; font-weight: bold; color: #ffd700; }
+        .victory-time { font-size: 1.3em; color: #aaa; }
+
+        /* Results Screen */
+        .results-container {
+            flex: 1; display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .results-title {
+            text-align: center; font-size: 1.8em; font-weight: bold;
+            color: #ffd700; margin-bottom: 5px;
+        }
+
+        .result-card {
+            padding: 14px 16px; border-radius: 14px;
+            background: rgba(255,255,255,0.06); border: 2px solid;
+            display: flex; align-items: center; gap: 12px;
+        }
+
+        .result-rank {
+            font-size: 1.5em; font-weight: bold; min-width: 40px; text-align: center;
+        }
+
+        .result-info { flex: 1; }
+        .result-team-name { font-weight: bold; font-size: 1.1em; }
+        .result-details { font-size: 0.85em; color: #aaa; margin-top: 4px; }
+
+        /* Team Colors */
+        .team-red { border-color: #ef4444; }
+        .team-blue { border-color: #3b82f6; }
+        .team-green { border-color: #22c55e; }
+        .team-yellow { border-color: #eab308; }
+        .team-purple { border-color: #a855f7; }
+        .team-orange { border-color: #f97316; }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 999; overflow: hidden;
+        }
+
+        .confetti-piece {
+            position: absolute; width: 10px; height: 10px;
+            top: -10px; animation: confettiFall linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Reconnect banner */
+        .reconnect-banner {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            color: white; text-align: center; padding: 10px;
+            font-weight: 600; z-index: 100;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ESCAPE ROOM</h1>
+            <div class="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Nicht verbunden</span>
+            </div>
+        </header>
+
+        <!-- Join Screen -->
+        <div class="screen active" id="joinScreen">
+            <div class="join-container">
+                <div class="input-group">
+                    <label for="playerName">Dein Name</label>
+                    <input type="text" id="playerName" placeholder="z.B. Max" maxlength="20" autocomplete="off">
+                </div>
+                <button class="btn-primary" onclick="joinGame()" id="joinBtn">Beitreten</button>
+            </div>
+        </div>
+
+        <!-- Waiting Screen -->
+        <div class="screen" id="waitingScreen">
+            <div class="waiting-container">
+                <div class="spinner"></div>
+                <div class="waiting-message">Warte auf Spielstart...</div>
+                <p style="color:#888;font-size:0.9em;">Der Host startet das Spiel gleich</p>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="screen" id="gameScreen">
+            <div class="game-container">
+                <div class="team-badge" id="teamBadge">Dein Team wird zugewiesen...</div>
+
+                <div class="room-info" id="roomInfo">
+                    <div class="room-title" id="roomTitle">Raum wird geladen...</div>
+                    <div class="room-meta">
+                        <span id="roomProgress">Raum 0/0</span>
+                        <span id="roomDesc"></span>
+                    </div>
+                </div>
+
+                <div class="clue-box">
+                    <div class="clue-label">Dein Hinweis</div>
+                    <div class="clue-text" id="clueText">Warte auf Hinweise...</div>
+                </div>
+
+                <div class="answer-section">
+                    <input type="text"
+                           class="answer-input"
+                           id="answerInput"
+                           placeholder="ANTWORT"
+                           autocomplete="off"
+                           autocorrect="off"
+                           autocapitalize="characters"
+                           spellcheck="false">
+                    <div class="answer-buttons">
+                        <button class="submit-btn" onclick="submitAnswer()">Absenden</button>
+                        <button class="hint-btn" onclick="requestHint()" id="hintBtn" title="Hinweis anfordern">?</button>
+                    </div>
+                    <div id="feedback"></div>
+                    <div id="hintArea"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Victory Screen -->
+        <div class="screen" id="victoryScreen">
+            <div class="victory-container">
+                <div class="victory-icon" id="victoryIcon"></div>
+                <div class="victory-title">GEWONNEN!</div>
+                <div class="victory-time" id="victoryTime">Zeit: --:--</div>
+                <p style="color:#aaa;font-size:1em;">Euer Team hat alle Raeume geloest!</p>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="screen" id="resultsScreen">
+            <div class="results-container">
+                <div class="results-title">Ergebnisse</div>
+                <div id="resultsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let peer = null;
+        let hostConnection = null;
+        let playerName = '';
+        let myTeam = null;
+        let maxHints = 3;
+        let hintsUsedThisRoom = 0;
+        let isReconnecting = false;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const hostId = urlParams.get('host');
+
+        if (!hostId) {
+            alert('Kein Host gefunden! Bitte den QR-Code erneut scannen.');
+        }
+
+        // ========== AUDIO ==========
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function getAudioCtx() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            try {
+                const ctx = getAudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    osc.frequency.setValueAtTime(523, ctx.currentTime);
+                    osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.4);
+                } else if (type === 'wrong') {
+                    osc.frequency.setValueAtTime(200, ctx.currentTime);
+                    osc.frequency.setValueAtTime(150, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'victory') {
+                    const notes = [523, 659, 784, 1047];
+                    notes.forEach((freq, i) => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.connect(g); g.connect(ctx.destination);
+                        o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+                        g.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.15);
+                        g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.15 + 0.4);
+                        o.start(ctx.currentTime + i * 0.15);
+                        o.stop(ctx.currentTime + i * 0.15 + 0.4);
+                    });
+                } else if (type === 'newroom') {
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    osc.frequency.setValueAtTime(550, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.25);
+                }
+            } catch(e) { /* Audio not supported */ }
+        }
+
+        function vibrate(pattern) {
+            try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {}
+        }
+
+        // ========== CONFETTI ==========
+        function showConfetti() {
+            const container = document.createElement('div');
+            container.className = 'confetti-container';
+            document.body.appendChild(container);
+
+            const colors = ['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316','#ffd700'];
+            for (let i = 0; i < 60; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+                piece.style.animationDelay = Math.random() * 1.5 + 's';
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                piece.style.width = (6 + Math.random() * 8) + 'px';
+                piece.style.height = (6 + Math.random() * 8) + 'px';
+                container.appendChild(piece);
+            }
+
+            setTimeout(() => container.remove(), 5000);
+        }
+
+        // ========== SCREENS ==========
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function updateStatus(text, connected) {
+            document.getElementById('statusText').textContent = text;
+            document.getElementById('statusDot').classList.toggle('connected', connected);
+        }
+
+        // ========== JOIN ==========
+        function joinGame() {
+            playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) { alert('Bitte gib deinen Namen ein!'); return; }
+            if (playerName.length > 20) { alert('Name zu lang! (max. 20 Zeichen)'); return; }
+
+            localStorage.setItem('escapeRoomName', playerName);
+            document.getElementById('joinBtn').disabled = true;
+            connectToHost();
+        }
+
+        // ========== CONNECTION ==========
+        function connectToHost() {
+            peer = new Peer({
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' }
+                    ]
+                }
+            });
+
+            peer.on('open', (id) => {
+                updateStatus('Verbinde...', false);
+
+                hostConnection = peer.connect(hostId, { reliable: true });
+
+                hostConnection.on('open', () => {
+                    updateStatus('Verbunden', true);
+                    removeReconnectBanner();
+
+                    hostConnection.send({
+                        type: isReconnecting ? 'reconnect' : 'join',
+                        name: playerName
+                    });
+
+                    if (!isReconnecting) showScreen('waitingScreen');
+                    isReconnecting = false;
+                });
+
+                hostConnection.on('data', (data) => handleHostMessage(data));
+
+                hostConnection.on('close', () => {
+                    updateStatus('Verbindung verloren', false);
+                    showReconnectBanner();
+                    attemptReconnect();
+                });
+
+                hostConnection.on('error', (err) => {
+                    console.error('Connection error:', err);
+                    updateStatus('Fehler', false);
+                });
+            });
+
+            peer.on('error', (err) => {
+                console.error('PeerJS Error:', err);
+                updateStatus('Fehler', false);
+                if (err.type === 'peer-unavailable') {
+                    alert('Host nicht gefunden! Bitte QR-Code erneut scannen.');
+                    document.getElementById('joinBtn').disabled = false;
+                }
+            });
+        }
+
+        // ========== RECONNECT ==========
+        function showReconnectBanner() {
+            if (document.querySelector('.reconnect-banner')) return;
+            const banner = document.createElement('div');
+            banner.className = 'reconnect-banner';
+            banner.textContent = 'Verbindung verloren - versuche erneut...';
+            document.body.appendChild(banner);
+        }
+
+        function removeReconnectBanner() {
+            const banner = document.querySelector('.reconnect-banner');
+            if (banner) banner.remove();
+        }
+
+        function attemptReconnect() {
+            setTimeout(() => {
+                if (!hostConnection || !hostConnection.open) {
+                    isReconnecting = true;
+                    if (peer) { try { peer.destroy(); } catch(e) {} }
+                    connectToHost();
+                }
+            }, 3000);
+        }
+
+        // ========== MESSAGE HANDLING ==========
+        function handleHostMessage(data) {
+            switch(data.type) {
+                case 'welcome':
+                    break;
+
+                case 'start':
+                    myTeam = data.team;
+                    maxHints = data.maxHints || 3;
+                    const badge = document.getElementById('teamBadge');
+                    badge.textContent = data.teamName;
+                    badge.className = 'team-badge team-' + data.team;
+                    showScreen('gameScreen');
+                    updateHintButton();
+                    vibrate(200);
+                    break;
+
+                case 'room':
+                    displayRoom(data);
+                    hintsUsedThisRoom = 0;
+                    updateHintButton();
+                    clearFeedback();
+                    clearHints();
+                    playSound('newroom');
+                    vibrate(100);
+                    break;
+
+                case 'feedback':
+                    showFeedback(data.message, data.correct);
+                    if (data.correct) {
+                        playSound('correct');
+                        vibrate([100, 50, 100]);
+                        document.getElementById('answerInput').disabled = true;
+                    } else {
+                        playSound('wrong');
+                        vibrate(150);
+                    }
+                    break;
+
+                case 'hint':
+                    displayHint(data.hint, data.hintsRemaining);
+                    break;
+
+                case 'victory':
+                    document.getElementById('victoryTime').textContent = 'Zeit: ' + data.time;
+                    document.getElementById('victoryIcon').textContent = '\uD83C\uDFC6';
+                    showScreen('victoryScreen');
+                    playSound('victory');
+                    vibrate([200, 100, 200, 100, 400]);
+                    showConfetti();
+                    break;
+
+                case 'results':
+                    displayResults(data.teams);
+                    showScreen('resultsScreen');
+                    break;
+
+                case 'end':
+                    alert(data.message);
+                    break;
+            }
+        }
+
+        // ========== ROOM DISPLAY ==========
+        function displayRoom(room) {
+            const roomInfo = document.getElementById('roomInfo');
+            roomInfo.classList.remove('room-transition');
+            void roomInfo.offsetWidth;
+            roomInfo.classList.add('room-transition');
+
+            document.getElementById('roomTitle').textContent = room.title;
+            document.getElementById('roomProgress').textContent = 'Raum ' + room.roomNumber + '/' + room.totalRooms;
+            document.getElementById('roomDesc').textContent = room.description;
+            document.getElementById('clueText').textContent = room.clue;
+
+            const input = document.getElementById('answerInput');
+            input.disabled = false;
+            input.value = '';
+            input.focus();
+        }
+
+        // ========== ANSWER ==========
+        function submitAnswer() {
+            const input = document.getElementById('answerInput');
+            const answer = input.value.trim();
+            if (!answer) { showFeedback('Bitte gib eine Antwort ein!', false); return; }
+            if (!hostConnection || !hostConnection.open) {
+                showFeedback('Keine Verbindung zum Host!', false);
+                return;
+            }
+
+            hostConnection.send({ type: 'answer', answer: answer });
+            showFeedback('Wird geprueft...', null);
+        }
+
+        // ========== HINTS ==========
+        function requestHint() {
+            if (!hostConnection || !hostConnection.open) return;
+            hostConnection.send({ type: 'requestHint' });
+            hintsUsedThisRoom++;
+            updateHintButton();
+        }
+
+        function updateHintButton() {
+            const btn = document.getElementById('hintBtn');
+            if (maxHints === 0) {
+                btn.style.display = 'none';
+                return;
+            }
+            btn.style.display = '';
+            const remaining = maxHints === 999 ? '?' : Math.max(0, maxHints - hintsUsedThisRoom);
+            btn.textContent = '? ' + remaining;
+            btn.disabled = maxHints !== 999 && hintsUsedThisRoom >= maxHints;
+        }
+
+        function displayHint(hint, remaining) {
+            const area = document.getElementById('hintArea');
+            const hintEl = document.createElement('div');
+            hintEl.className = 'feedback hint-msg';
+            hintEl.textContent = hint;
+            area.appendChild(hintEl);
+
+            if (remaining !== undefined && remaining !== 99) {
+                const btn = document.getElementById('hintBtn');
+                btn.textContent = '? ' + remaining;
+                btn.disabled = remaining <= 0;
+            }
+        }
+
+        function clearHints() {
+            document.getElementById('hintArea').innerHTML = '';
+        }
+
+        // ========== FEEDBACK ==========
+        function showFeedback(message, correct) {
+            const fb = document.getElementById('feedback');
+            fb.textContent = message;
+            fb.className = 'feedback';
+            if (correct === true) fb.classList.add('correct');
+            else if (correct === false) fb.classList.add('incorrect');
+        }
+
+        function clearFeedback() {
+            const fb = document.getElementById('feedback');
+            fb.textContent = '';
+            fb.className = 'feedback';
+        }
+
+        // ========== RESULTS ==========
+        function displayResults(teams) {
+            const list = document.getElementById('resultsList');
+            list.innerHTML = teams.map((t, i) => {
+                const medal = i === 0 ? '\uD83E\uDD47' : i === 1 ? '\uD83E\uDD48' : i === 2 ? '\uD83E\uDD49' : (i + 1) + '.';
+                return `
+                    <div class="result-card" style="border-color:${t.color};">
+                        <div class="result-rank">${medal}</div>
+                        <div class="result-info">
+                            <div class="result-team-name" style="color:${t.color};">${t.name}</div>
+                            <div class="result-details">
+                                Raeume: ${t.rooms}/${t.totalRooms}
+                                ${t.time ? ' | Zeit: ' + t.time : ' | Nicht fertig'}
+                                ${t.hints > 0 ? ' | ' + t.hints + ' Hinweise' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========== INIT ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            // Enter key handlers
+            document.getElementById('answerInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') submitAnswer();
+            });
+
+            document.getElementById('playerName').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') joinGame();
+            });
+
+            // Restore name from localStorage
+            const savedName = localStorage.getItem('escapeRoomName');
+            if (savedName) {
+                document.getElementById('playerName').value = savedName;
+            }
+
+            document.getElementById('playerName').focus();
+        });
+    </script>
+</body>
+</html>

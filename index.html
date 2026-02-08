@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Room Classroom</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #fff; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+
+        .landing {
+            max-width: 600px; width: 100%; text-align: center;
+        }
+
+        h1 {
+            font-size: 2.8em; margin-bottom: 12px;
+            background: linear-gradient(45deg, #00d4ff, #7b2ff7, #ff6bcb);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .subtitle { color: #aaa; font-size: 1.15em; margin-bottom: 40px; line-height: 1.6; }
+
+        .cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+
+        .card {
+            flex: 1; min-width: 240px; max-width: 280px;
+            background: rgba(255,255,255,0.06); backdrop-filter: blur(12px);
+            border-radius: 20px; padding: 35px 25px;
+            border: 2px solid rgba(255,255,255,0.1);
+            text-decoration: none; color: white;
+            transition: all 0.3s; cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0,212,255,0.4);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+
+        .card-icon { font-size: 3em; margin-bottom: 15px; }
+
+        .card h2 { font-size: 1.4em; margin-bottom: 10px; }
+
+        .card p { color: #aaa; font-size: 0.95em; line-height: 1.5; }
+
+        .features {
+            margin-top: 50px; padding: 30px;
+            background: rgba(255,255,255,0.04); border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .features h3 { margin-bottom: 15px; font-size: 1.2em; color: #00d4ff; }
+
+        .feature-list {
+            list-style: none; text-align: left;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+
+        .feature-list li {
+            padding: 6px 0; color: #ccc; font-size: 0.9em;
+        }
+
+        .feature-list li::before { content: '\2713  '; color: #4ade80; font-weight: bold; }
+
+        @media (max-width: 500px) {
+            h1 { font-size: 2em; }
+            .feature-list { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="landing">
+        <h1>ESCAPE ROOM CLASSROOM</h1>
+        <p class="subtitle">
+            Das interaktive Raetselspiel fuer deine Klasse.<br>
+            Teilt euch in Teams auf, loest die Raetsel und entkommt als Erste!
+        </p>
+
+        <div class="cards">
+            <a class="card" href="host.html">
+                <div class="card-icon">\uD83D\uDCBB</div>
+                <h2>Host / Lehrer</h2>
+                <p>Starte ein neues Spiel, erstelle Raetsel und behalte den Ueberblick ueber alle Teams.</p>
+            </a>
+
+            <a class="card" href="player.html">
+                <div class="card-icon">\uD83D\uDCF1</div>
+                <h2>Spieler / SuS</h2>
+                <p>Tritt einem Spiel bei, loesche Raetsel mit deinem Team und werde der Erste!</p>
+            </a>
+        </div>
+
+        <div class="features">
+            <h3>Features</h3>
+            <ul class="feature-list">
+                <li>2-6 Teams einstellbar</li>
+                <li>Eigene Raetsel erstellen</li>
+                <li>QR-Code zum Beitreten</li>
+                <li>Hinweissystem</li>
+                <li>Sound & Vibration</li>
+                <li>Live-Fortschritt</li>
+                <li>Ergebnistabelle</li>
+                <li>Raetsel Import/Export</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
