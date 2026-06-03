@@ -186,7 +186,7 @@
             </div>
             <div class="tab-content" id="tab-settings">
                 <div class="settings-section"><h2 style="margin-bottom:16px;">Spieleinstellungen</h2>
-                    <div class="settings-row"><label>Teamanzahl:</label><select id="teamCount"><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option></select></div>
+                    <div class="settings-row"><label>Teamanzahl:</label><select id="teamCount"><option value="1">1 (kooperativ - alle zusammen)</option><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option></select></div>
                     <div class="settings-row"><label>Min. Spieler:</label><select id="minPlayers"><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="6">6</option></select></div>
                     <div class="settings-row"><label>Hinweise:</label><select id="maxHints"><option value="0">Keine</option><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="999">Unbegrenzt</option></select></div>
                 </div>
@@ -424,7 +424,7 @@
             if(count<0){clearInterval(iv);connections.forEach(c=>{try{c.send({type:'countdown',count:0});}catch(e){}});
                 Object.entries(teams).forEach(([tk,team])=>{team.players.forEach(p=>{const c=connections.get(p.id);if(c){c.send({type:'start',team:tk,teamColor:team.color,teamName:team.emoji+' '+team.name,maxHints:parseInt(document.getElementById('maxHints').value)});sendRoomToPlayer(p.id,tk,0);}});});}
         },1000);
-        document.getElementById('lobbyView').classList.add('hidden');document.getElementById('gameView').classList.remove('hidden');startTimer();updateTeamsDisplay();
+        document.getElementById('lobbyView').classList.add('hidden');document.getElementById('gameView').classList.remove('hidden');document.querySelector('.leaderboard').style.display=Object.keys(teams).length<=1?'none':'';startTimer();updateTeamsDisplay();
     }
 
     function sendRoomToPlayer(playerId,teamKey,roomIndex){
