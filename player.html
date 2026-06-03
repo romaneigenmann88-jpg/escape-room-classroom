@@ -6,257 +6,196 @@
     <title>Escape Room - Spieler</title>
     <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);color:#fff;min-height:100vh;min-height:-webkit-fill-available;padding:12px;display:flex;flex-direction:column}
+        .container{max-width:500px;margin:0 auto;width:100%;flex:1;display:flex;flex-direction:column}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            color: #fff; min-height: 100vh; min-height: -webkit-fill-available;
-            padding: 15px; display: flex; flex-direction: column;
-        }
+        /* HEADER */
+        header{text-align:center;margin-bottom:12px;padding:12px;background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border-radius:16px;border:1px solid rgba(255,255,255,0.1)}
+        h1{font-size:1.6em;margin-bottom:4px;background:linear-gradient(45deg,#00d4ff,#7b2ff7,#ff6bcb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .status{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:6px;font-size:0.9em}
+        .status-dot{width:10px;height:10px;border-radius:50%;background:#ef4444;animation:pulse 2s infinite}
+        .status-dot.connected{background:#4ade80}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
-        .container {
-            max-width: 500px; margin: 0 auto; width: 100%;
-            flex: 1; display: flex; flex-direction: column;
-        }
+        /* SCREENS */
+        .screen{display:none;flex-direction:column;flex:1}.screen.active{display:flex}
 
-        header {
-            text-align: center; margin-bottom: 15px; padding: 15px;
-            background: rgba(255,255,255,0.06); backdrop-filter: blur(12px);
-            border-radius: 18px; border: 1px solid rgba(255,255,255,0.1);
-        }
+        /* JOIN */
+        .join-container{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
+        .input-group{display:flex;flex-direction:column;gap:6px}
+        .input-group label{font-size:1em;font-weight:500}
+        input[type="text"]{padding:14px;font-size:1.1em;border:2px solid rgba(255,255,255,0.2);border-radius:14px;background:rgba(255,255,255,0.1);color:white;backdrop-filter:blur(10px)}
+        input::placeholder{color:rgba(255,255,255,0.4)}input:focus{outline:none;border-color:#00d4ff}
 
-        h1 {
-            font-size: 1.8em; margin-bottom: 6px;
-            background: linear-gradient(45deg, #00d4ff, #7b2ff7, #ff6bcb);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        }
+        /* BUTTONS */
+        button{padding:14px;font-size:1.05em;font-weight:700;border:none;border-radius:14px;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px}
+        .btn-primary{background:linear-gradient(45deg,#00d4ff,#7b2ff7);color:white;text-transform:uppercase;font-size:1.15em}
+        .btn-primary:active{transform:scale(0.97)}
+        .btn-submit{background:linear-gradient(45deg,#4ade80,#22c55e);color:white;text-transform:uppercase;width:100%;font-size:1.15em;padding:16px}
+        .btn-submit:active{transform:scale(0.97)}
+        .btn-hint{background:rgba(245,158,11,0.2);color:#f59e0b;border:2px solid #f59e0b;min-width:55px;font-size:1em}
+        .btn-hint:active{transform:scale(0.97)}.btn-hint:disabled{opacity:0.3}
+        button:disabled{opacity:0.5;cursor:not-allowed}
 
-        .status { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 8px; }
+        /* WAITING */
+        .waiting-container{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:20px}
+        .spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.2);border-top-color:#00d4ff;border-radius:50%;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .waiting-message{font-size:1.1em;color:#aaa}
 
-        .status-dot {
-            width: 10px; height: 10px; border-radius: 50%;
-            background: #ef4444; animation: pulse 2s infinite;
-        }
-        .status-dot.connected { background: #4ade80; }
+        /* GAME CONTAINER */
+        .game-container{flex:1;display:flex;flex-direction:column;gap:12px;padding-bottom:10px}
 
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        /* TEAM BADGE */
+        .team-badge{padding:10px;border-radius:12px;text-align:center;font-size:1.1em;font-weight:bold;border:3px solid;background:rgba(255,255,255,0.08)}
 
-        .screen { display: none; flex-direction: column; flex: 1; }
-        .screen.active { display: flex; }
+        /* ROOM HEADER */
+        .room-header{padding:14px;background:rgba(255,255,255,0.06);border-radius:14px;border:1px solid rgba(255,255,255,0.1)}
+        .room-emoji{font-size:2em;text-align:center;margin-bottom:6px}
+        .room-title{font-size:1.2em;font-weight:bold;text-align:center;margin-bottom:4px}
+        .room-progress{display:flex;justify-content:center;gap:6px;margin:8px 0}
+        .room-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s}
+        .room-dot.done{background:#4ade80}.room-dot.current{background:#00d4ff;box-shadow:0 0 8px #00d4ff}
 
-        /* Join Screen */
-        .join-container {
-            flex: 1; display: flex; flex-direction: column;
-            justify-content: center; gap: 18px;
-        }
+        /* STORY INTRO */
+        .story-box{padding:14px;background:linear-gradient(135deg,rgba(123,47,247,0.1),rgba(0,212,255,0.05));border-radius:12px;border:1px solid rgba(123,47,247,0.2);font-style:italic;color:#ccc;line-height:1.5;min-height:40px}
 
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        label { font-size: 1.05em; font-weight: 500; }
+        /* PUZZLE AREA */
+        .puzzle-area{padding:14px;background:rgba(255,255,255,0.06);border-radius:14px;border:1px solid rgba(255,255,255,0.1)}
+        .puzzle-desc{font-size:1.05em;margin-bottom:12px;color:#ddd;text-align:center}
 
-        input[type="text"] {
-            padding: 16px; font-size: 1.1em;
-            border: 2px solid rgba(255,255,255,0.2); border-radius: 14px;
-            background: rgba(255,255,255,0.1); color: white;
-            backdrop-filter: blur(10px);
-        }
+        /* FRAGMENT BOX (Collaborative) */
+        .fragment-box{padding:16px;border-radius:12px;background:linear-gradient(135deg,rgba(0,212,255,0.12),rgba(123,47,247,0.1));border:2px solid rgba(0,212,255,0.35);margin-bottom:12px}
+        .fragment-label{font-size:0.8em;color:#00d4ff;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+        .fragment-text{font-size:1.1em;line-height:1.5}
+        .collab-warning{text-align:center;padding:8px;background:rgba(245,158,11,0.15);border-radius:8px;color:#f59e0b;font-size:0.85em;margin-bottom:10px}
+        .team-progress-bar{text-align:center;padding:8px;background:rgba(74,222,128,0.1);border-radius:8px;color:#4ade80;font-size:0.9em;margin-top:8px}
 
-        input::placeholder { color: rgba(255,255,255,0.4); }
-        input:focus { outline: none; border-color: #00d4ff; }
+        /* ANSWER INPUT */
+        .answer-section{margin-top:auto}
+        .answer-input{width:100%;padding:14px;font-size:1.3em;text-align:center;text-transform:uppercase;font-weight:bold;border:2px solid rgba(255,255,255,0.2);border-radius:14px;background:rgba(255,255,255,0.1);color:white;margin-bottom:10px}
+        .answer-buttons{display:flex;gap:8px}
 
-        button {
-            padding: 16px; font-size: 1.1em; font-weight: 700;
-            border: none; border-radius: 14px; cursor: pointer;
-            transition: all 0.2s; letter-spacing: 0.5px;
-        }
+        /* LOCK UI */
+        .lock-container{display:flex;flex-direction:column;align-items:center;margin:10px 0}
+        .lock-shackle{width:80px;height:45px;border:6px solid #888;border-bottom:none;border-radius:40px 40px 0 0;margin-bottom:-2px;transition:transform 0.5s}
+        .lock-shackle.open{transform:translateY(-15px) rotate(-20deg);transform-origin:right bottom}
+        .lock-body{background:linear-gradient(180deg,#555,#333);border-radius:10px;padding:14px 10px;display:flex;gap:3px;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,0.5)}
+        .lock-digit{width:42px;background:#111;border-radius:6px;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+        .lock-btn{width:42px;height:28px;background:rgba(255,255,255,0.08);border:none;color:white;font-size:1.2em;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .lock-btn:active{background:rgba(255,255,255,0.2)}
+        .lock-digit-display{font-size:1.8em;font-weight:bold;color:#0f0;padding:4px 0;font-family:'Courier New',monospace;text-align:center;width:42px}
+        .lock-clue{text-align:center;color:#aaa;margin-top:12px;font-size:0.95em;line-height:1.4}
 
-        .btn-primary {
-            background: linear-gradient(45deg, #00d4ff, #7b2ff7); color: white;
-            text-transform: uppercase; font-size: 1.2em;
-        }
-        .btn-primary:active { transform: scale(0.97); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        /* DIRECTION LOCK */
+        .dpad-container{display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+        .dpad{display:grid;grid-template-columns:60px 60px 60px;grid-template-rows:60px 60px 60px;gap:4px}
+        .dpad-btn{width:60px;height:60px;border-radius:10px;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:white;font-size:1.5em;display:flex;align-items:center;justify-content:center;cursor:pointer}
+        .dpad-btn:active{background:rgba(0,212,255,0.3);border-color:#00d4ff}
+        .dpad-center{background:transparent;border:none;pointer-events:none}
+        .dir-sequence{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;min-height:36px;padding:6px;background:rgba(255,255,255,0.05);border-radius:8px}
+        .dir-arrow{width:30px;height:30px;background:rgba(0,212,255,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1em}
+        .dir-actions{display:flex;gap:8px}
+        .btn-sm{padding:8px 16px;font-size:0.85em;border-radius:8px;background:rgba(255,255,255,0.1);color:#ddd;border:1px solid rgba(255,255,255,0.2)}
 
-        /* Waiting Screen */
-        .waiting-container {
-            flex: 1; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center; gap: 25px;
-        }
+        /* SORTING */
+        .sort-list{display:flex;flex-direction:column;gap:6px;margin:8px 0;touch-action:none}
+        .sort-item{display:flex;align-items:center;gap:8px;padding:12px;background:rgba(255,255,255,0.08);border-radius:12px;border:2px solid rgba(255,255,255,0.1);user-select:none;transition:transform 0.15s,box-shadow 0.15s}
+        .sort-item.dragging{transform:scale(1.03);box-shadow:0 8px 25px rgba(0,0,0,0.4);background:rgba(0,212,255,0.15);border-color:#00d4ff;z-index:10;position:relative}
+        .sort-emoji{font-size:1.6em;min-width:36px;text-align:center}
+        .sort-text{flex:1;font-size:1em}
+        .sort-num{min-width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold}
+        .sort-arrows{display:flex;flex-direction:column;gap:2px}
+        .sort-arrow{width:28px;height:24px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:white;font-size:0.8em;display:flex;align-items:center;justify-content:center;cursor:pointer}
+        .sort-arrow:active{background:rgba(0,212,255,0.3)}
+        .sort-placeholder{height:50px;border:2px dashed rgba(0,212,255,0.3);border-radius:12px;margin:3px 0;transition:all 0.2s}
 
-        .spinner {
-            width: 50px; height: 50px;
-            border: 4px solid rgba(255,255,255,0.2); border-top-color: #00d4ff;
-            border-radius: 50%; animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* IMAGE/EMOJI */
+        .emoji-equations{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+        .emoji-eq{font-size:1.4em;text-align:center;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px}
+        .emoji-eq.question{border:2px solid #00d4ff;background:rgba(0,212,255,0.1)}
+        .pattern-display{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-size:2em;margin:12px 0}
+        .pattern-q{color:#00d4ff;font-weight:bold}
+        .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+        .choice-btn{padding:14px;font-size:1.4em;border-radius:12px;border:3px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);text-align:center;cursor:pointer;transition:all 0.2s}
+        .choice-btn.selected{border-color:#00d4ff;background:rgba(0,212,255,0.15)}
+        .choice-btn:active{transform:scale(0.95)}
 
-        .waiting-message { font-size: 1.2em; color: #aaa; }
+        /* HIDDEN ROOM */
+        .hidden-grid{display:grid;gap:3px;background:rgba(0,0,0,0.3);border-radius:12px;padding:8px;margin:8px 0}
+        .hidden-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.8em;background:rgba(255,255,255,0.05);border-radius:8px;cursor:pointer;transition:all 0.2s;user-select:none;position:relative}
+        .hidden-cell:active{transform:scale(0.92)}
+        .hidden-cell.discovered{box-shadow:inset 0 0 12px rgba(0,212,255,0.25)}
+        .hidden-cell.shake{animation:cellShake 0.3s}
+        @keyframes cellShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+        .reveal-toast{position:fixed;bottom:140px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.92);color:#fff;padding:12px 18px;border-radius:12px;border:1px solid #00d4ff;max-width:85%;text-align:center;z-index:50;animation:toastIn 0.3s}
+        @keyframes toastIn{from{transform:translateX(-50%) translateY(10px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+        .found-counter{text-align:center;color:#aaa;font-size:0.85em;margin:4px 0}
 
-        /* Game Screen */
-        .game-container { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+        /* ELIMINATION */
+        .elim-options{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+        .elim-option{display:flex;align-items:center;gap:10px;padding:14px;border-radius:12px;border:3px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);cursor:pointer;transition:all 0.2s;user-select:none}
+        .elim-option:active{transform:scale(0.98)}
+        .elim-option.selected{border-color:#4ade80;background:rgba(74,222,128,0.1)}
+        .elim-option.selected .elim-check{background:#4ade80;color:#000}
+        .elim-option.eliminated{border-color:#ef4444;background:rgba(239,68,68,0.08);text-decoration:line-through;opacity:0.6}
+        .elim-option.eliminated .elim-check{background:#ef4444;color:#fff}
+        .elim-option.seq-selected{border-color:#00d4ff;background:rgba(0,212,255,0.08)}
+        .elim-check{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+        .elim-text{flex:1;font-size:1em;line-height:1.3}
+        .elim-badge{padding:4px 8px;background:rgba(0,212,255,0.2);border-radius:6px;color:#00d4ff;font-size:0.8em;text-align:center;margin-bottom:8px}
+        .seq-display{display:flex;gap:4px;flex-wrap:wrap;min-height:32px;padding:6px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:8px}
+        .seq-item{padding:4px 10px;background:rgba(0,212,255,0.2);border-radius:6px;font-size:0.85em;color:#00d4ff}
 
-        .team-badge {
-            padding: 12px; border-radius: 14px; text-align: center;
-            font-size: 1.2em; font-weight: bold; border: 3px solid;
-            background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
-        }
+        /* FEEDBACK */
+        .feedback{padding:12px;border-radius:10px;text-align:center;font-size:1em;font-weight:600;margin-top:8px;animation:feedbackIn 0.3s}
+        @keyframes feedbackIn{from{transform:translateY(-6px);opacity:0}to{transform:translateY(0);opacity:1}}
+        .feedback.correct{background:rgba(74,222,128,0.2);border:2px solid #4ade80;color:#4ade80}
+        .feedback.incorrect{background:rgba(239,68,68,0.2);border:2px solid #ef4444;color:#ef4444}
+        .feedback.hint-msg{background:rgba(245,158,11,0.15);border:2px solid #f59e0b;color:#f59e0b}
+        .feedback.info{background:rgba(0,212,255,0.1);border:2px solid rgba(0,212,255,0.3);color:#00d4ff}
 
-        .room-info {
-            padding: 16px; background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(10px); border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        /* ROOM TRANSITION */
+        .room-transition{animation:roomSlideIn 0.5s ease-out}
+        @keyframes roomSlideIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-        .room-title { font-size: 1.3em; font-weight: bold; margin-bottom: 8px; }
+        /* TYPEWRITER */
+        .typewriter{overflow:hidden;border-right:2px solid #ccc;white-space:normal;animation:blink 0.7s step-end infinite}
+        @keyframes blink{50%{border-color:transparent}}
 
-        .room-meta {
-            display: flex; justify-content: space-between; align-items: center;
-            padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 0.9em; color: #aaa;
-        }
+        /* VICTORY */
+        .victory-container{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:16px}
+        .victory-icon{font-size:4em;animation:bounce 1s infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+        .victory-title{font-size:2.2em;font-weight:bold;color:#ffd700}
+        .victory-time{font-size:1.2em;color:#aaa}
 
-        .clue-box {
-            padding: 18px; border-radius: 14px;
-            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(123,47,247,0.1));
-            border: 2px solid rgba(0,212,255,0.3);
-        }
+        /* RESULTS */
+        .results-container{flex:1;display:flex;flex-direction:column;gap:12px}
+        .results-title{text-align:center;font-size:1.6em;font-weight:bold;color:#ffd700;margin-bottom:4px}
+        .result-card{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,0.06);border:2px solid;display:flex;align-items:center;gap:10px}
+        .result-rank{font-size:1.4em;font-weight:bold;min-width:36px;text-align:center}
+        .result-info{flex:1}.result-team-name{font-weight:bold;font-size:1em}
+        .result-details{font-size:0.8em;color:#aaa;margin-top:3px}
 
-        .clue-label {
-            font-size: 0.85em; color: #00d4ff;
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
-        }
+        /* CONFETTI */
+        .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;overflow:hidden}
+        .confetti-piece{position:absolute;width:10px;height:10px;top:-10px;animation:confettiFall linear forwards}
+        @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
 
-        .clue-text { font-size: 1.15em; line-height: 1.5; }
+        /* RECONNECT */
+        .reconnect-banner{position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,#ef4444,#dc2626);color:white;text-align:center;padding:8px;font-weight:600;z-index:100;animation:slideDown 0.3s}
+        @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 
-        .answer-section {
-            padding: 16px; background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(10px); border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        /* TEAM COLORS */
+        .team-red{border-color:#ef4444}.team-blue{border-color:#3b82f6}.team-green{border-color:#22c55e}
+        .team-yellow{border-color:#eab308}.team-purple{border-color:#a855f7}.team-orange{border-color:#f97316}
 
-        .answer-input {
-            width: 100%; padding: 16px; font-size: 1.3em;
-            text-align: center; text-transform: uppercase;
-            font-weight: bold; margin-bottom: 12px;
-            border: 2px solid rgba(255,255,255,0.2); border-radius: 14px;
-            background: rgba(255,255,255,0.1); color: white;
-        }
-
-        .answer-buttons { display: flex; gap: 10px; }
-
-        .submit-btn {
-            flex: 1; background: linear-gradient(45deg, #4ade80, #22c55e);
-            padding: 16px; font-size: 1.2em; color: white; text-transform: uppercase;
-        }
-        .submit-btn:active { transform: scale(0.97); }
-
-        .hint-btn {
-            background: rgba(245,158,11,0.2); color: #f59e0b;
-            border: 2px solid #f59e0b; padding: 16px; min-width: 60px;
-            font-size: 1.1em;
-        }
-        .hint-btn:active { transform: scale(0.97); }
-        .hint-btn:disabled { opacity: 0.3; }
-
-        .feedback {
-            padding: 14px; border-radius: 12px; text-align: center;
-            font-size: 1.05em; font-weight: 600; margin-top: 12px;
-            animation: feedbackIn 0.3s;
-        }
-
-        @keyframes feedbackIn {
-            from { transform: translateY(-8px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .feedback.correct { background: rgba(74,222,128,0.2); border: 2px solid #4ade80; color: #4ade80; }
-        .feedback.incorrect { background: rgba(239,68,68,0.2); border: 2px solid #ef4444; color: #ef4444; }
-        .feedback.hint-msg { background: rgba(245,158,11,0.15); border: 2px solid #f59e0b; color: #f59e0b; }
-
-        /* Room transition */
-        .room-transition {
-            animation: roomSlideIn 0.5s ease-out;
-        }
-
-        @keyframes roomSlideIn {
-            from { transform: translateX(30px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Victory Screen */
-        .victory-container {
-            flex: 1; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center; gap: 18px;
-        }
-
-        .victory-icon { font-size: 4em; animation: bounce 1s infinite; }
-        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
-
-        .victory-title { font-size: 2.2em; font-weight: bold; color: #ffd700; }
-        .victory-time { font-size: 1.3em; color: #aaa; }
-
-        /* Results Screen */
-        .results-container {
-            flex: 1; display: flex; flex-direction: column; gap: 15px;
-        }
-
-        .results-title {
-            text-align: center; font-size: 1.8em; font-weight: bold;
-            color: #ffd700; margin-bottom: 5px;
-        }
-
-        .result-card {
-            padding: 14px 16px; border-radius: 14px;
-            background: rgba(255,255,255,0.06); border: 2px solid;
-            display: flex; align-items: center; gap: 12px;
-        }
-
-        .result-rank {
-            font-size: 1.5em; font-weight: bold; min-width: 40px; text-align: center;
-        }
-
-        .result-info { flex: 1; }
-        .result-team-name { font-weight: bold; font-size: 1.1em; }
-        .result-details { font-size: 0.85em; color: #aaa; margin-top: 4px; }
-
-        /* Team Colors */
-        .team-red { border-color: #ef4444; }
-        .team-blue { border-color: #3b82f6; }
-        .team-green { border-color: #22c55e; }
-        .team-yellow { border-color: #eab308; }
-        .team-purple { border-color: #a855f7; }
-        .team-orange { border-color: #f97316; }
-
-        /* Confetti */
-        .confetti-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 999; overflow: hidden;
-        }
-
-        .confetti-piece {
-            position: absolute; width: 10px; height: 10px;
-            top: -10px; animation: confettiFall linear forwards;
-        }
-
-        @keyframes confettiFall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-
-        /* Reconnect banner */
-        .reconnect-banner {
-            position: fixed; top: 0; left: 0; right: 0;
-            background: linear-gradient(90deg, #ef4444, #dc2626);
-            color: white; text-align: center; padding: 10px;
-            font-weight: 600; z-index: 100;
-            animation: slideDown 0.3s;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100%); }
-            to { transform: translateY(0); }
-        }
+        /* COUNTDOWN */
+        .countdown-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:200}
+        .countdown-num{font-size:8em;font-weight:bold;color:#00d4ff;animation:countPop 0.8s ease-out}
+        @keyframes countPop{0%{transform:scale(2);opacity:0}50%{transform:scale(1);opacity:1}100%{transform:scale(0.8);opacity:0.5}}
     </style>
 </head>
 <body>
@@ -269,7 +208,6 @@
             </div>
         </header>
 
-        <!-- Join Screen -->
         <div class="screen active" id="joinScreen">
             <div class="join-container">
                 <div class="input-group">
@@ -280,63 +218,27 @@
             </div>
         </div>
 
-        <!-- Waiting Screen -->
         <div class="screen" id="waitingScreen">
             <div class="waiting-container">
                 <div class="spinner"></div>
                 <div class="waiting-message">Warte auf Spielstart...</div>
-                <p style="color:#888;font-size:0.9em;">Der Host startet das Spiel gleich</p>
+                <p style="color:#888;font-size:0.85em;">Der Host startet das Spiel gleich</p>
             </div>
         </div>
 
-        <!-- Game Screen -->
         <div class="screen" id="gameScreen">
-            <div class="game-container">
-                <div class="team-badge" id="teamBadge">Dein Team wird zugewiesen...</div>
-
-                <div class="room-info" id="roomInfo">
-                    <div class="room-title" id="roomTitle">Raum wird geladen...</div>
-                    <div class="room-meta">
-                        <span id="roomProgress">Raum 0/0</span>
-                        <span id="roomDesc"></span>
-                    </div>
-                </div>
-
-                <div class="clue-box">
-                    <div class="clue-label">Dein Hinweis</div>
-                    <div class="clue-text" id="clueText">Warte auf Hinweise...</div>
-                </div>
-
-                <div class="answer-section">
-                    <input type="text"
-                           class="answer-input"
-                           id="answerInput"
-                           placeholder="ANTWORT"
-                           autocomplete="off"
-                           autocorrect="off"
-                           autocapitalize="characters"
-                           spellcheck="false">
-                    <div class="answer-buttons">
-                        <button class="submit-btn" onclick="submitAnswer()">Absenden</button>
-                        <button class="hint-btn" onclick="requestHint()" id="hintBtn" title="Hinweis anfordern">?</button>
-                    </div>
-                    <div id="feedback"></div>
-                    <div id="hintArea"></div>
-                </div>
-            </div>
+            <div class="game-container" id="gameContainer"></div>
         </div>
 
-        <!-- Victory Screen -->
         <div class="screen" id="victoryScreen">
             <div class="victory-container">
-                <div class="victory-icon" id="victoryIcon"></div>
-                <div class="victory-title">GEWONNEN!</div>
+                <div class="victory-icon">\uD83C\uDFC6</div>
+                <div class="victory-title">GESCHAFFT!</div>
                 <div class="victory-time" id="victoryTime">Zeit: --:--</div>
-                <p style="color:#aaa;font-size:1em;">Euer Team hat alle Raeume geloest!</p>
+                <p style="color:#aaa;font-size:0.95em;">Euer Team hat alle Raeume geloest!</p>
             </div>
         </div>
 
-        <!-- Results Screen -->
         <div class="screen" id="resultsScreen">
             <div class="results-container">
                 <div class="results-title">Ergebnisse</div>
@@ -346,390 +248,666 @@
     </div>
 
     <script>
-        let peer = null;
-        let hostConnection = null;
-        let playerName = '';
-        let myTeam = null;
-        let maxHints = 3;
-        let hintsUsedThisRoom = 0;
-        let isReconnecting = false;
+    // ========== STATE ==========
+    let peer=null,hostConnection=null,playerName='',myTeam=null,maxHints=3,hintsUsedThisRoom=0,isReconnecting=false;
+    let currentPuzzle=null,currentRoomData=null,dragEngine=null;
+    const urlParams=new URLSearchParams(window.location.search);
+    const hostId=urlParams.get('host');
+    if(!hostId)alert('Kein Host gefunden! Bitte QR-Code erneut scannen.');
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const hostId = urlParams.get('host');
+    // ========== AUDIO ==========
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    let audioCtx=null;
+    function getAudioCtx(){if(!audioCtx)audioCtx=new AudioCtx();return audioCtx;}
+    function playSound(type){
+        try{const ctx=getAudioCtx();
+        if(type==='correct'){
+            const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);
+            o.frequency.setValueAtTime(523,ctx.currentTime);o.frequency.setValueAtTime(659,ctx.currentTime+0.1);o.frequency.setValueAtTime(784,ctx.currentTime+0.2);
+            g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.4);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.4);
+        }else if(type==='wrong'){
+            const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);
+            o.frequency.setValueAtTime(200,ctx.currentTime);o.frequency.setValueAtTime(150,ctx.currentTime+0.15);
+            g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.3);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.3);
+        }else if(type==='victory'){
+            [523,659,784,1047].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);
+            o.frequency.setValueAtTime(f,ctx.currentTime+i*0.15);g.gain.setValueAtTime(0.25,ctx.currentTime+i*0.15);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+i*0.15+0.4);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.4);});
+        }else if(type==='newroom'){
+            const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);
+            o.frequency.setValueAtTime(440,ctx.currentTime);o.frequency.setValueAtTime(550,ctx.currentTime+0.1);
+            g.gain.setValueAtTime(0.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.25);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.25);
+        }}catch(e){}
+    }
+    function vibrate(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
 
-        if (!hostId) {
-            alert('Kein Host gefunden! Bitte den QR-Code erneut scannen.');
-        }
+    // ========== CONFETTI ==========
+    function showConfetti(){
+        const c=document.createElement('div');c.className='confetti-container';document.body.appendChild(c);
+        const colors=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316','#ffd700'];
+        for(let i=0;i<50;i++){const p=document.createElement('div');p.className='confetti-piece';
+        p.style.left=Math.random()*100+'%';p.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+        p.style.animationDuration=(1.5+Math.random()*2)+'s';p.style.animationDelay=Math.random()*1.5+'s';
+        p.style.borderRadius=Math.random()>0.5?'50%':'0';p.style.width=(6+Math.random()*8)+'px';p.style.height=(6+Math.random()*8)+'px';c.appendChild(p);}
+        setTimeout(()=>c.remove(),5000);
+    }
 
-        // ========== AUDIO ==========
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
+    // ========== SCREENS ==========
+    function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+    function updateStatus(t,c){document.getElementById('statusText').textContent=t;document.getElementById('statusDot').classList.toggle('connected',c);}
 
-        function getAudioCtx() {
-            if (!audioCtx) audioCtx = new AudioCtx();
-            return audioCtx;
-        }
+    // ========== JOIN ==========
+    function joinGame(){
+        playerName=document.getElementById('playerName').value.trim();
+        if(!playerName){alert('Bitte gib deinen Namen ein!');return;}
+        localStorage.setItem('escapeRoomName',playerName);
+        document.getElementById('joinBtn').disabled=true;
+        connectToHost();
+    }
 
-        function playSound(type) {
-            try {
-                const ctx = getAudioCtx();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                if (type === 'correct') {
-                    osc.frequency.setValueAtTime(523, ctx.currentTime);
-                    osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
-                    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
-                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-                    osc.start(ctx.currentTime);
-                    osc.stop(ctx.currentTime + 0.4);
-                } else if (type === 'wrong') {
-                    osc.frequency.setValueAtTime(200, ctx.currentTime);
-                    osc.frequency.setValueAtTime(150, ctx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                    osc.start(ctx.currentTime);
-                    osc.stop(ctx.currentTime + 0.3);
-                } else if (type === 'victory') {
-                    const notes = [523, 659, 784, 1047];
-                    notes.forEach((freq, i) => {
-                        const o = ctx.createOscillator();
-                        const g = ctx.createGain();
-                        o.connect(g); g.connect(ctx.destination);
-                        o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
-                        g.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.15);
-                        g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.15 + 0.4);
-                        o.start(ctx.currentTime + i * 0.15);
-                        o.stop(ctx.currentTime + i * 0.15 + 0.4);
-                    });
-                } else if (type === 'newroom') {
-                    osc.frequency.setValueAtTime(440, ctx.currentTime);
-                    osc.frequency.setValueAtTime(550, ctx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
-                    osc.start(ctx.currentTime);
-                    osc.stop(ctx.currentTime + 0.25);
-                }
-            } catch(e) { /* Audio not supported */ }
-        }
-
-        function vibrate(pattern) {
-            try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {}
-        }
-
-        // ========== CONFETTI ==========
-        function showConfetti() {
-            const container = document.createElement('div');
-            container.className = 'confetti-container';
-            document.body.appendChild(container);
-
-            const colors = ['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316','#ffd700'];
-            for (let i = 0; i < 60; i++) {
-                const piece = document.createElement('div');
-                piece.className = 'confetti-piece';
-                piece.style.left = Math.random() * 100 + '%';
-                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
-                piece.style.animationDelay = Math.random() * 1.5 + 's';
-                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                piece.style.width = (6 + Math.random() * 8) + 'px';
-                piece.style.height = (6 + Math.random() * 8) + 'px';
-                container.appendChild(piece);
-            }
-
-            setTimeout(() => container.remove(), 5000);
-        }
-
-        // ========== SCREENS ==========
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function updateStatus(text, connected) {
-            document.getElementById('statusText').textContent = text;
-            document.getElementById('statusDot').classList.toggle('connected', connected);
-        }
-
-        // ========== JOIN ==========
-        function joinGame() {
-            playerName = document.getElementById('playerName').value.trim();
-            if (!playerName) { alert('Bitte gib deinen Namen ein!'); return; }
-            if (playerName.length > 20) { alert('Name zu lang! (max. 20 Zeichen)'); return; }
-
-            localStorage.setItem('escapeRoomName', playerName);
-            document.getElementById('joinBtn').disabled = true;
-            connectToHost();
-        }
-
-        // ========== CONNECTION ==========
-        function connectToHost() {
-            peer = new Peer({
-                config: {
-                    iceServers: [
-                        { urls: 'stun:stun.l.google.com:19302' },
-                        { urls: 'stun:stun1.l.google.com:19302' }
-                    ]
-                }
+    // ========== CONNECTION ==========
+    function connectToHost(){
+        peer=new Peer({config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}});
+        peer.on('open',()=>{
+            updateStatus('Verbinde...',false);
+            hostConnection=peer.connect(hostId,{reliable:true});
+            hostConnection.on('open',()=>{
+                updateStatus('Verbunden',true);removeReconnectBanner();
+                hostConnection.send({type:isReconnecting?'reconnect':'join',name:playerName});
+                if(!isReconnecting)showScreen('waitingScreen');isReconnecting=false;
             });
+            hostConnection.on('data',d=>handleHostMessage(d));
+            hostConnection.on('close',()=>{updateStatus('Verbindung verloren',false);showReconnectBanner();attemptReconnect();});
+            hostConnection.on('error',e=>{console.error('Conn err:',e);updateStatus('Fehler',false);});
+        });
+        peer.on('error',e=>{console.error('PeerJS:',e);updateStatus('Fehler',false);
+            if(e.type==='peer-unavailable'){alert('Host nicht gefunden!');document.getElementById('joinBtn').disabled=false;}
+        });
+    }
+    function showReconnectBanner(){if(document.querySelector('.reconnect-banner'))return;const b=document.createElement('div');b.className='reconnect-banner';b.textContent='Verbindung verloren - versuche erneut...';document.body.appendChild(b);}
+    function removeReconnectBanner(){const b=document.querySelector('.reconnect-banner');if(b)b.remove();}
+    function attemptReconnect(){setTimeout(()=>{if(!hostConnection||!hostConnection.open){isReconnecting=true;if(peer)try{peer.destroy();}catch(e){}connectToHost();}},3000);}
 
-            peer.on('open', (id) => {
-                updateStatus('Verbinde...', false);
+    // ========== MESSAGE HANDLING ==========
+    function handleHostMessage(data){
+        switch(data.type){
+            case 'welcome':break;
+            case 'countdown':showCountdown(data.count);break;
+            case 'start':
+                myTeam=data.team;maxHints=data.maxHints||3;
+                showScreen('gameScreen');vibrate(200);break;
+            case 'room':
+                currentRoomData=data;currentPuzzle=data.puzzle;hintsUsedThisRoom=0;
+                renderRoom(data);playSound('newroom');vibrate(100);break;
+            case 'feedback':
+                showFeedback(data.message,data.correct);
+                if(data.correct){playSound('correct');vibrate([100,50,100]);disableInput();}
+                else{playSound('wrong');vibrate(150);}break;
+            case 'teamProgress':updateTeamProgress(data);break;
+            case 'hint':displayHint(data.hint,data.hintsRemaining);break;
+            case 'victory':
+                document.getElementById('victoryTime').textContent='Zeit: '+data.time;
+                showScreen('victoryScreen');playSound('victory');vibrate([200,100,200,100,400]);showConfetti();break;
+            case 'results':displayResults(data.teams);showScreen('resultsScreen');break;
+            case 'end':alert(data.message);break;
+        }
+    }
 
-                hostConnection = peer.connect(hostId, { reliable: true });
+    // ========== COUNTDOWN ==========
+    function showCountdown(count){
+        let overlay=document.querySelector('.countdown-overlay');
+        if(!overlay){overlay=document.createElement('div');overlay.className='countdown-overlay';document.body.appendChild(overlay);}
+        if(count<=0){overlay.remove();return;}
+        overlay.innerHTML=`<div class="countdown-num">${count===0?'LOS!':count}</div>`;
+        vibrate(50);
+    }
 
-                hostConnection.on('open', () => {
-                    updateStatus('Verbunden', true);
-                    removeReconnectBanner();
+    // ========== ROOM RENDERER ==========
+    function renderRoom(data){
+        const gc=document.getElementById('gameContainer');
+        gc.classList.remove('room-transition');void gc.offsetWidth;gc.classList.add('room-transition');
 
-                    hostConnection.send({
-                        type: isReconnecting ? 'reconnect' : 'join',
-                        name: playerName
-                    });
+        const dots=Array.from({length:data.totalRooms},(_,i)=>{
+            let cls='room-dot';
+            if(i<data.roomNumber-1)cls+=' done';
+            else if(i===data.roomNumber-1)cls+=' current';
+            return `<div class="${cls}"></div>`;
+        }).join('');
 
-                    if (!isReconnecting) showScreen('waitingScreen');
-                    isReconnecting = false;
-                });
-
-                hostConnection.on('data', (data) => handleHostMessage(data));
-
-                hostConnection.on('close', () => {
-                    updateStatus('Verbindung verloren', false);
-                    showReconnectBanner();
-                    attemptReconnect();
-                });
-
-                hostConnection.on('error', (err) => {
-                    console.error('Connection error:', err);
-                    updateStatus('Fehler', false);
-                });
-            });
-
-            peer.on('error', (err) => {
-                console.error('PeerJS Error:', err);
-                updateStatus('Fehler', false);
-                if (err.type === 'peer-unavailable') {
-                    alert('Host nicht gefunden! Bitte QR-Code erneut scannen.');
-                    document.getElementById('joinBtn').disabled = false;
-                }
-            });
+        let puzzleHTML='';
+        switch(data.puzzle.type){
+            case 'collaborative':puzzleHTML=renderCollaborative(data);break;
+            case 'lock':puzzleHTML=renderLock(data);break;
+            case 'sorting':puzzleHTML=renderSorting(data);break;
+            case 'image':puzzleHTML=renderImage(data);break;
+            case 'hidden':puzzleHTML=renderHidden(data);break;
+            case 'elimination':puzzleHTML=renderElimination(data);break;
+            default:puzzleHTML=renderCollaborative(data);
         }
 
-        // ========== RECONNECT ==========
-        function showReconnectBanner() {
-            if (document.querySelector('.reconnect-banner')) return;
-            const banner = document.createElement('div');
-            banner.className = 'reconnect-banner';
-            banner.textContent = 'Verbindung verloren - versuche erneut...';
-            document.body.appendChild(banner);
+        gc.innerHTML=`
+            <div class="team-badge team-${myTeam}" id="teamBadge">${data.teamName||''}</div>
+            <div class="room-header">
+                <div class="room-emoji">${data.roomEmoji||'\uD83D\uDEAA'}</div>
+                <div class="room-title">${esc(data.title)}</div>
+                <div class="room-progress">${dots}</div>
+            </div>
+            <div class="story-box" id="storyBox"></div>
+            <div class="puzzle-area">${puzzleHTML}</div>
+            <div id="feedbackArea"></div>
+            <div id="hintArea"></div>
+        `;
+
+        typewriterEffect(document.getElementById('storyBox'),data.storyIntro||'');
+
+        // Init drag if needed
+        if(data.puzzle.type==='sorting'||(data.puzzle.type==='image'&&data.puzzle.subtype==='symbol_order')){
+            setTimeout(()=>initDragEngine(),100);
         }
+    }
 
-        function removeReconnectBanner() {
-            const banner = document.querySelector('.reconnect-banner');
-            if (banner) banner.remove();
-        }
+    function typewriterEffect(el,text){
+        el.textContent='';el.classList.add('typewriter');
+        let i=0;const iv=setInterval(()=>{if(i<text.length){el.textContent+=text[i];i++;}else{clearInterval(iv);el.classList.remove('typewriter');}},25);
+    }
 
-        function attemptReconnect() {
-            setTimeout(() => {
-                if (!hostConnection || !hostConnection.open) {
-                    isReconnecting = true;
-                    if (peer) { try { peer.destroy(); } catch(e) {} }
-                    connectToHost();
-                }
-            }, 3000);
-        }
+    function disableInput(){
+        const inputs=document.querySelectorAll('.puzzle-area input,.puzzle-area button:not(.btn-hint)');
+        inputs.forEach(el=>el.disabled=true);
+    }
 
-        // ========== MESSAGE HANDLING ==========
-        function handleHostMessage(data) {
-            switch(data.type) {
-                case 'welcome':
-                    break;
+    // ========== COLLABORATIVE RENDERER ==========
+    function renderCollaborative(data){
+        const p=data.puzzle,frag=data.fragment;
+        return `
+            <div class="puzzle-desc">${esc(p.description)}</div>
+            ${p.collaborative!==false?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team! Jeder sieht einen anderen Hinweis.</div>`:''}
+            ${frag?`<div class="fragment-box"><div class="fragment-label">${esc(frag.label)}</div><div class="fragment-text">${esc(frag.text)}</div></div>`:''}
+            <div class="team-progress-bar" id="teamProgressBar" style="display:none;"></div>
+            <div class="answer-section">
+                <input type="text" class="answer-input" id="answerInput" placeholder="ANTWORT" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+                <div class="answer-buttons">
+                    <button class="btn-submit" onclick="submitText()">Absenden</button>
+                    <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
+                </div>
+            </div>`;
+    }
 
-                case 'start':
-                    myTeam = data.team;
-                    maxHints = data.maxHints || 3;
-                    const badge = document.getElementById('teamBadge');
-                    badge.textContent = data.teamName;
-                    badge.className = 'team-badge team-' + data.team;
-                    showScreen('gameScreen');
-                    updateHintButton();
-                    vibrate(200);
-                    break;
+    // ========== LOCK RENDERER ==========
+    function renderLock(data){
+        const p=data.puzzle,sub=p.subtype||'number_lock';
+        if(sub==='directional_lock')return renderDirectionalLock(data);
 
-                case 'room':
-                    displayRoom(data);
-                    hintsUsedThisRoom = 0;
-                    updateHintButton();
-                    clearFeedback();
-                    clearHints();
-                    playSound('newroom');
-                    vibrate(100);
-                    break;
+        const isLetter=sub==='letter_lock';
+        const digits=p.digits||4;
+        const lockDigits=Array.from({length:digits},(_,i)=>{
+            return `<div class="lock-digit">
+                <button class="lock-btn" onclick="lockSpin(${i},1,${isLetter})">\u25B2</button>
+                <div class="lock-digit-display" id="lockD${i}">${isLetter?'A':'0'}</div>
+                <button class="lock-btn" onclick="lockSpin(${i},-1,${isLetter})">\u25BC</button>
+            </div>`;
+        }).join('');
 
-                case 'feedback':
-                    showFeedback(data.message, data.correct);
-                    if (data.correct) {
-                        playSound('correct');
-                        vibrate([100, 50, 100]);
-                        document.getElementById('answerInput').disabled = true;
-                    } else {
-                        playSound('wrong');
-                        vibrate(150);
-                    }
-                    break;
+        return `
+            <div class="puzzle-desc">${esc(p.description)}</div>
+            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            ${p.collaborative!==false&&data.fragment?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team!</div>`:''}
+            <div class="lock-container">
+                <div class="lock-shackle" id="lockShackle"></div>
+                <div class="lock-body">${lockDigits}</div>
+            </div>
+            <div class="lock-clue">${esc(p.clueText||'')}</div>
+            <div class="team-progress-bar" id="teamProgressBar" style="display:none;"></div>
+            <div class="answer-section" style="margin-top:12px;">
+                <div class="answer-buttons">
+                    <button class="btn-submit" onclick="submitLock(${digits},${isLetter})">Schloss oeffnen</button>
+                    <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
+                </div>
+            </div>`;
+    }
 
-                case 'hint':
-                    displayHint(data.hint, data.hintsRemaining);
-                    break;
+    function renderDirectionalLock(data){
+        const p=data.puzzle;
+        return `
+            <div class="puzzle-desc">${esc(p.description)}</div>
+            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            <div class="dpad-container">
+                <div class="dir-sequence" id="dirSequence"></div>
+                <div class="dpad">
+                    <div></div><div><button class="dpad-btn" onclick="addDir('up')">\u2B06\uFE0F</button></div><div></div>
+                    <div><button class="dpad-btn" onclick="addDir('left')">\u2B05\uFE0F</button></div>
+                    <div class="dpad-center"></div>
+                    <div><button class="dpad-btn" onclick="addDir('right')">\u27A1\uFE0F</button></div>
+                    <div></div><div><button class="dpad-btn" onclick="addDir('down')">\u2B07\uFE0F</button></div><div></div>
+                </div>
+                <div class="dir-actions">
+                    <button class="btn-sm" onclick="undoDir()">Zurueck</button>
+                    <button class="btn-sm" onclick="clearDirs()">Loeschen</button>
+                </div>
+            </div>
+            <div class="lock-clue">${esc(p.clueText||'')}</div>
+            <div class="answer-section" style="margin-top:8px;">
+                <div class="answer-buttons">
+                    <button class="btn-submit" onclick="submitDirections()">Pruefen</button>
+                    <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
+                </div>
+            </div>`;
+    }
 
-                case 'victory':
-                    document.getElementById('victoryTime').textContent = 'Zeit: ' + data.time;
-                    document.getElementById('victoryIcon').textContent = '\uD83C\uDFC6';
-                    showScreen('victoryScreen');
-                    playSound('victory');
-                    vibrate([200, 100, 200, 100, 400]);
-                    showConfetti();
-                    break;
+    let lockValues=[];
+    function lockSpin(idx,dir,isLetter){
+        if(!lockValues.length){const d=currentPuzzle.digits||4;lockValues=Array(d).fill(isLetter?0:0);}
+        const max=isLetter?26:10;lockValues[idx]=(lockValues[idx]+dir+max)%max;
+        const el=document.getElementById('lockD'+idx);
+        el.textContent=isLetter?String.fromCharCode(65+lockValues[idx]):lockValues[idx].toString();
+        el.style.transition='transform 0.15s';el.style.transform='translateY('+(dir>0?'-4':'4')+'px)';
+        setTimeout(()=>el.style.transform='',150);
+    }
+    function submitLock(digits,isLetter){
+        if(!lockValues.length)lockValues=Array(digits).fill(0);
+        const val=lockValues.map(v=>isLetter?String.fromCharCode(65+v):v.toString()).join('');
+        sendAnswer(val);
+    }
 
-                case 'results':
-                    displayResults(data.teams);
-                    showScreen('resultsScreen');
-                    break;
+    let dirSequence=[];
+    const dirEmojis={up:'\u2B06\uFE0F',down:'\u2B07\uFE0F',left:'\u2B05\uFE0F',right:'\u27A1\uFE0F'};
+    function addDir(d){dirSequence.push(d);renderDirSeq();}
+    function undoDir(){dirSequence.pop();renderDirSeq();}
+    function clearDirs(){dirSequence=[];renderDirSeq();}
+    function renderDirSeq(){
+        const el=document.getElementById('dirSequence');
+        if(el)el.innerHTML=dirSequence.map(d=>`<div class="dir-arrow">${dirEmojis[d]}</div>`).join('');
+    }
+    function submitDirections(){sendAnswer(dirSequence);}
 
-                case 'end':
-                    alert(data.message);
-                    break;
-            }
-        }
-
-        // ========== ROOM DISPLAY ==========
-        function displayRoom(room) {
-            const roomInfo = document.getElementById('roomInfo');
-            roomInfo.classList.remove('room-transition');
-            void roomInfo.offsetWidth;
-            roomInfo.classList.add('room-transition');
-
-            document.getElementById('roomTitle').textContent = room.title;
-            document.getElementById('roomProgress').textContent = 'Raum ' + room.roomNumber + '/' + room.totalRooms;
-            document.getElementById('roomDesc').textContent = room.description;
-            document.getElementById('clueText').textContent = room.clue;
-
-            const input = document.getElementById('answerInput');
-            input.disabled = false;
-            input.value = '';
-            input.focus();
-        }
-
-        // ========== ANSWER ==========
-        function submitAnswer() {
-            const input = document.getElementById('answerInput');
-            const answer = input.value.trim();
-            if (!answer) { showFeedback('Bitte gib eine Antwort ein!', false); return; }
-            if (!hostConnection || !hostConnection.open) {
-                showFeedback('Keine Verbindung zum Host!', false);
-                return;
-            }
-
-            hostConnection.send({ type: 'answer', answer: answer });
-            showFeedback('Wird geprueft...', null);
-        }
-
-        // ========== HINTS ==========
-        function requestHint() {
-            if (!hostConnection || !hostConnection.open) return;
-            hostConnection.send({ type: 'requestHint' });
-            hintsUsedThisRoom++;
-            updateHintButton();
-        }
-
-        function updateHintButton() {
-            const btn = document.getElementById('hintBtn');
-            if (maxHints === 0) {
-                btn.style.display = 'none';
-                return;
-            }
-            btn.style.display = '';
-            const remaining = maxHints === 999 ? '?' : Math.max(0, maxHints - hintsUsedThisRoom);
-            btn.textContent = '? ' + remaining;
-            btn.disabled = maxHints !== 999 && hintsUsedThisRoom >= maxHints;
-        }
-
-        function displayHint(hint, remaining) {
-            const area = document.getElementById('hintArea');
-            const hintEl = document.createElement('div');
-            hintEl.className = 'feedback hint-msg';
-            hintEl.textContent = hint;
-            area.appendChild(hintEl);
-
-            if (remaining !== undefined && remaining !== 99) {
-                const btn = document.getElementById('hintBtn');
-                btn.textContent = '? ' + remaining;
-                btn.disabled = remaining <= 0;
-            }
-        }
-
-        function clearHints() {
-            document.getElementById('hintArea').innerHTML = '';
-        }
-
-        // ========== FEEDBACK ==========
-        function showFeedback(message, correct) {
-            const fb = document.getElementById('feedback');
-            fb.textContent = message;
-            fb.className = 'feedback';
-            if (correct === true) fb.classList.add('correct');
-            else if (correct === false) fb.classList.add('incorrect');
-        }
-
-        function clearFeedback() {
-            const fb = document.getElementById('feedback');
-            fb.textContent = '';
-            fb.className = 'feedback';
-        }
-
-        // ========== RESULTS ==========
-        function displayResults(teams) {
-            const list = document.getElementById('resultsList');
-            list.innerHTML = teams.map((t, i) => {
-                const medal = i === 0 ? '\uD83E\uDD47' : i === 1 ? '\uD83E\uDD48' : i === 2 ? '\uD83E\uDD49' : (i + 1) + '.';
-                return `
-                    <div class="result-card" style="border-color:${t.color};">
-                        <div class="result-rank">${medal}</div>
-                        <div class="result-info">
-                            <div class="result-team-name" style="color:${t.color};">${t.name}</div>
-                            <div class="result-details">
-                                Raeume: ${t.rooms}/${t.totalRooms}
-                                ${t.time ? ' | Zeit: ' + t.time : ' | Nicht fertig'}
-                                ${t.hints > 0 ? ' | ' + t.hints + ' Hinweise' : ''}
-                            </div>
+    // ========== SORTING RENDERER ==========
+    function renderSorting(data){
+        const p=data.puzzle;
+        const items=shuffleArray([...p.items]);
+        window._sortItems=items;
+        return `
+            <div class="puzzle-desc">${esc(p.description)}</div>
+            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            ${p.collaborative&&data.fragment?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team!</div>`:''}
+            <div class="sort-list" id="sortList">
+                ${items.map((it,i)=>`
+                    <div class="sort-item" data-id="${it.id}" data-idx="${i}">
+                        <div class="sort-num">${i+1}</div>
+                        <div class="sort-emoji">${it.emoji||''}</div>
+                        <div class="sort-text">${esc(it.display)}</div>
+                        <div class="sort-arrows">
+                            <button class="sort-arrow" onclick="moveItem(${i},-1)">\u25B2</button>
+                            <button class="sort-arrow" onclick="moveItem(${i},1)">\u25BC</button>
                         </div>
                     </div>
-                `;
-            }).join('');
+                `).join('')}
+            </div>
+            <div class="team-progress-bar" id="teamProgressBar" style="display:none;"></div>
+            <div class="answer-section">
+                <div class="answer-buttons">
+                    <button class="btn-submit" onclick="submitSorting()">Reihenfolge pruefen</button>
+                    <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
+                </div>
+            </div>`;
+    }
+
+    function moveItem(idx,dir){
+        const list=document.getElementById('sortList');
+        if(!list)return;
+        const items=Array.from(list.children);
+        const newIdx=idx+dir;
+        if(newIdx<0||newIdx>=items.length)return;
+        const item=items[idx];
+        if(dir>0)list.insertBefore(items[newIdx],item);
+        else list.insertBefore(item,items[newIdx]);
+        updateSortNumbers();
+    }
+
+    function updateSortNumbers(){
+        const list=document.getElementById('sortList');
+        if(!list)return;
+        Array.from(list.children).forEach((el,i)=>{
+            el.dataset.idx=i;
+            const num=el.querySelector('.sort-num');if(num)num.textContent=i+1;
+            const arrows=el.querySelectorAll('.sort-arrow');
+            if(arrows[0])arrows[0].setAttribute('onclick',`moveItem(${i},-1)`);
+            if(arrows[1])arrows[1].setAttribute('onclick',`moveItem(${i},1)`);
+        });
+    }
+
+    function submitSorting(){
+        const list=document.getElementById('sortList');
+        if(!list)return;
+        const order=Array.from(list.children).map(el=>el.dataset.id);
+        sendAnswer(order);
+    }
+
+    // ========== IMAGE RENDERER ==========
+    function renderImage(data){
+        const p=data.puzzle,sub=p.subtype||'emoji_equation';
+        if(sub==='emoji_equation')return renderEmojiEquation(data);
+        if(sub==='pattern_match')return renderPatternMatch(data);
+        if(sub==='symbol_order')return renderSymbolOrder(data);
+        return renderEmojiEquation(data);
+    }
+
+    function renderEmojiEquation(data){
+        const p=data.puzzle;
+        const eqs=(p.equations||[]).map(eq=>`<div class="emoji-eq ${eq.info?'':'question'}">${esc(eq.display)}</div>`).join('');
+        return `
+            <div class="puzzle-desc">${esc(p.description)}</div>
+            <div class="emoji-equations">${eqs}</div>
+            <div class="answer-section">
+                <input type="text" class="answer-input" id="answerInput" placeholder="?" autocomplete="off" inputmode="numeric">
+                <div class="answer-buttons">
+                    <button class="btn-submit" onclick="submitText()">Absenden</button>
+                    <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
+                </div>
+            </div>`;
+    }
+
+    function renderPatternMatch(data){
+        const p=data.puzzle;
+        const pattern=(p.pattern||[]).map((s,i)=>s==='?'?`<span class="pattern-q">?</span>`:`<span>${s}</span>`).join('');
+        window._selectedChoice=null;
+        const opts=(p.options||[]).map((o,i)=>`<div class="choice-btn" data-val="${esc(o)}" onclick="selectChoice(this,'${esc(o)}')">${o}</div>`).join('');
+        return `
+            <div class="puzzle-desc">${esc(p.description)}</div>
+            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            <div class="pattern-display">${pattern}</div>
+            <div class="choice-grid">${opts}</div>
+            <div class="answer-section">
+                <div class="answer-buttons">
+                    <button class="btn-submit" onclick="submitChoice()">Absenden</button>
+                    <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
+                </div>
+            </div>`;
+    }
+
+    function selectChoice(el,val){
+        document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+        el.classList.add('selected');window._selectedChoice=val;
+    }
+    function submitChoice(){if(!window._selectedChoice){showFeedback('Bitte waehle eine Antwort!',false);return;}sendAnswer(window._selectedChoice);}
+
+    function renderSymbolOrder(data){
+        const p=data.puzzle;
+        const items=shuffleArray([...p.items]);
+        window._sortItems=items;
+        return `
+            <div class="puzzle-desc">${esc(p.description)}</div>
+            <div class="sort-list" id="sortList">
+                ${items.map((it,i)=>`
+                    <div class="sort-item" data-id="${it.id}" data-idx="${i}">
+                        <div class="sort-num">${i+1}</div>
+                        <div class="sort-emoji">${it.display||it.emoji||''}</div>
+                        <div class="sort-text">${esc(it.label||'')}</div>
+                        <div class="sort-arrows">
+                            <button class="sort-arrow" onclick="moveItem(${i},-1)">\u25B2</button>
+                            <button class="sort-arrow" onclick="moveItem(${i},1)">\u25BC</button>
+                        </div>
+                    </div>`).join('')}
+            </div>
+            <div class="answer-section">
+                <div class="answer-buttons">
+                    <button class="btn-submit" onclick="submitSorting()">Reihenfolge pruefen</button>
+                    <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
+                </div>
+            </div>`;
+    }
+
+    // ========== HIDDEN RENDERER ==========
+    function renderHidden(data){
+        const p=data.puzzle,scene=p.scene||{};
+        const w=scene.width||5,h=scene.height||4;
+        const grid=Array(h).fill(null).map(()=>Array(w).fill(null));
+        (scene.objects||[]).forEach(obj=>{if(obj.x<w&&obj.y<h)grid[obj.y][obj.x]=obj;});
+        window._hiddenFound=0;window._hiddenTotal=(scene.objects||[]).filter(o=>o.clickable).length;
+
+        let cells='';
+        for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+            const obj=grid[y][x];
+            if(obj){
+                const cl=obj.clickable?'clickable':'';
+                const reveal=obj.clickable?` onclick="revealHidden(this,'${esc(obj.reveals||'').replace(/'/g,"\\'")}')"`:` onclick="shakeCell(this)"`;
+                cells+=`<div class="hidden-cell ${cl}" data-x="${x}" data-y="${y}"${reveal}>${obj.emoji}</div>`;
+            }else{
+                cells+=`<div class="hidden-cell" onclick="shakeCell(this)" style="opacity:0.3;font-size:1em;">.</div>`;
+            }
         }
 
-        // ========== INIT ==========
-        document.addEventListener('DOMContentLoaded', () => {
-            // Enter key handlers
-            document.getElementById('answerInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') submitAnswer();
-            });
+        return `
+            <div class="puzzle-desc">${esc(p.description)}</div>
+            <div class="hidden-grid" style="grid-template-columns:repeat(${w},1fr);">${cells}</div>
+            <div class="found-counter" id="foundCounter">0 von ${window._hiddenTotal} Hinweisen gefunden</div>
+            <div class="answer-section">
+                <input type="text" class="answer-input" id="answerInput" placeholder="LOESUNG" autocomplete="off" autocorrect="off" autocapitalize="characters">
+                <div class="answer-buttons">
+                    <button class="btn-submit" onclick="submitText()">Absenden</button>
+                    <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
+                </div>
+            </div>`;
+    }
 
-            document.getElementById('playerName').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') joinGame();
-            });
+    function revealHidden(cell,text){
+        if(cell.classList.contains('discovered'))return;
+        cell.classList.add('discovered');window._hiddenFound++;
+        const counter=document.getElementById('foundCounter');
+        if(counter)counter.textContent=window._hiddenFound+' von '+window._hiddenTotal+' Hinweisen gefunden';
+        showToast(text);vibrate(50);
+    }
+    function shakeCell(cell){cell.classList.remove('shake');void cell.offsetWidth;cell.classList.add('shake');}
+    function showToast(text){
+        document.querySelectorAll('.reveal-toast').forEach(t=>t.remove());
+        const toast=document.createElement('div');toast.className='reveal-toast';toast.textContent=text;
+        document.body.appendChild(toast);setTimeout(()=>toast.remove(),4000);
+        toast.onclick=()=>toast.remove();
+    }
 
-            // Restore name from localStorage
-            const savedName = localStorage.getItem('escapeRoomName');
-            if (savedName) {
-                document.getElementById('playerName').value = savedName;
+    // ========== ELIMINATION RENDERER ==========
+    function renderElimination(data){
+        const p=data.puzzle,sub=p.subtype||'select_all';
+        window._elimSelected=new Set();window._elimSequence=[];
+
+        let badge='';
+        if(sub==='select_all')badge='<div class="elim-badge">Waehle ALLE richtigen Antworten</div>';
+        else if(sub==='eliminate')badge='<div class="elim-badge">Streiche die FALSCHEN Aussagen durch</div>';
+        else if(sub==='sequence')badge='<div class="elim-badge">Waehle die Antworten in der richtigen Reihenfolge</div>';
+
+        const opts=(p.options||[]).map((o,i)=>{
+            const clickFn=sub==='sequence'?`toggleSeq('${o.id}',this)`:`toggleElim('${o.id}',this,'${sub}')`;
+            return `<div class="elim-option" data-id="${o.id}" onclick="${clickFn}">
+                <div class="elim-check"></div>
+                <div class="elim-text">${esc(o.display)}</div>
+            </div>`;
+        }).join('');
+
+        return `
+            <div class="puzzle-desc">${esc(p.description)}</div>
+            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            ${p.collaborative&&data.fragment?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team!</div>`:''}
+            ${badge}
+            ${sub==='sequence'?'<div class="seq-display" id="seqDisplay"></div>':''}
+            <div class="elim-options">${opts}</div>
+            <div class="team-progress-bar" id="teamProgressBar" style="display:none;"></div>
+            <div class="answer-section">
+                <div class="answer-buttons">
+                    <button class="btn-submit" onclick="submitElimination('${sub}')">Auswahl pruefen</button>
+                    <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
+                </div>
+            </div>`;
+    }
+
+    function toggleElim(id,el,sub){
+        if(window._elimSelected.has(id)){
+            window._elimSelected.delete(id);
+            el.classList.remove('selected','eliminated');
+            el.querySelector('.elim-check').textContent='';
+        }else{
+            window._elimSelected.add(id);
+            if(sub==='eliminate'){el.classList.add('eliminated');el.querySelector('.elim-check').textContent='\u2716';}
+            else{el.classList.add('selected');el.querySelector('.elim-check').textContent='\u2714';}
+        }
+    }
+
+    function toggleSeq(id,el){
+        const idx=window._elimSequence.indexOf(id);
+        if(idx>=0){
+            window._elimSequence.splice(idx,1);
+            el.classList.remove('seq-selected');el.querySelector('.elim-check').textContent='';
+        }else{
+            window._elimSequence.push(id);
+            el.classList.add('seq-selected');el.querySelector('.elim-check').textContent=window._elimSequence.length;
+        }
+        renderSeqDisplay();
+    }
+
+    function renderSeqDisplay(){
+        const el=document.getElementById('seqDisplay');if(!el)return;
+        const opts=currentPuzzle.options||[];
+        el.innerHTML=window._elimSequence.map((id,i)=>{
+            const opt=opts.find(o=>o.id===id);
+            return `<div class="seq-item">${i+1}. ${opt?opt.display.substring(0,20):id}</div>`;
+        }).join('');
+    }
+
+    function submitElimination(sub){
+        if(sub==='sequence'){
+            if(window._elimSequence.length===0){showFeedback('Bitte waehle die Reihenfolge!',false);return;}
+            sendAnswer(window._elimSequence);
+        }else{
+            if(window._elimSelected.size===0){showFeedback('Bitte waehle mindestens eine Option!',false);return;}
+            sendAnswer([...window._elimSelected]);
+        }
+    }
+
+    // ========== TOUCH DRAG ENGINE ==========
+    function initDragEngine(){
+        const list=document.getElementById('sortList');
+        if(!list)return;
+        let dragItem=null,startY=0,startIdx=0,items=[],placeholder=null,longPressTimer=null;
+
+        function getItems(){return Array.from(list.querySelectorAll('.sort-item'));}
+
+        function onStart(e){
+            const touch=e.touches?e.touches[0]:e;
+            const item=touch.target.closest('.sort-item');
+            if(!item||touch.target.closest('.sort-arrow'))return;
+            longPressTimer=setTimeout(()=>{
+                dragItem=item;startY=touch.clientY;
+                items=getItems();startIdx=items.indexOf(item);
+                item.classList.add('dragging');
+                placeholder=document.createElement('div');placeholder.className='sort-placeholder';
+                item.parentNode.insertBefore(placeholder,item.nextSibling);
+                if(e.cancelable)e.preventDefault();
+            },200);
+        }
+
+        function onMove(e){
+            if(!dragItem)return;
+            if(e.cancelable)e.preventDefault();
+            const touch=e.touches?e.touches[0]:e;
+            const dy=touch.clientY-startY;
+            dragItem.style.transform=`translateY(${dy}px) scale(1.03)`;
+
+            const rect=dragItem.getBoundingClientRect();
+            const midY=rect.top+rect.height/2;
+            items=getItems().filter(i=>i!==dragItem&&i!==placeholder);
+            let inserted=false;
+            for(const item of items){
+                const r=item.getBoundingClientRect();
+                if(midY<r.top+r.height/2){list.insertBefore(placeholder,item);inserted=true;break;}
             }
+            if(!inserted&&items.length>0)list.insertBefore(placeholder,items[items.length-1].nextSibling);
+        }
 
-            document.getElementById('playerName').focus();
-        });
+        function onEnd(){
+            if(longPressTimer)clearTimeout(longPressTimer);
+            if(!dragItem)return;
+            dragItem.classList.remove('dragging');dragItem.style.transform='';
+            if(placeholder&&placeholder.parentNode){list.insertBefore(dragItem,placeholder);placeholder.remove();}
+            dragItem=null;placeholder=null;
+            updateSortNumbers();
+        }
+
+        list.addEventListener('touchstart',onStart,{passive:false});
+        list.addEventListener('touchmove',onMove,{passive:false});
+        list.addEventListener('touchend',onEnd);
+        list.addEventListener('mousedown',onStart);
+        document.addEventListener('mousemove',onMove);
+        document.addEventListener('mouseup',onEnd);
+    }
+
+    // ========== ANSWER SUBMISSION ==========
+    function submitText(){
+        const input=document.getElementById('answerInput');
+        if(!input)return;
+        const val=input.value.trim();
+        if(!val){showFeedback('Bitte gib eine Antwort ein!',false);return;}
+        sendAnswer(val);
+    }
+
+    function sendAnswer(answer){
+        if(!hostConnection||!hostConnection.open){showFeedback('Keine Verbindung!',false);return;}
+        hostConnection.send({type:'answer',answer:answer,puzzleType:currentPuzzle?currentPuzzle.type:''});
+        showFeedback('Wird geprueft...',null);
+    }
+
+    // ========== HINTS ==========
+    function requestHint(){
+        if(!hostConnection||!hostConnection.open)return;
+        hostConnection.send({type:'requestHint'});hintsUsedThisRoom++;
+        const btn=document.getElementById('hintBtn');
+        if(btn){
+            const r=maxHints===999?'?':Math.max(0,maxHints-hintsUsedThisRoom);
+            btn.textContent='? '+r;if(maxHints!==999&&hintsUsedThisRoom>=maxHints)btn.disabled=true;
+        }
+    }
+    function displayHint(hint){
+        const area=document.getElementById('hintArea');if(!area)return;
+        const el=document.createElement('div');el.className='feedback hint-msg';el.textContent=hint;area.appendChild(el);
+    }
+
+    // ========== FEEDBACK ==========
+    function showFeedback(msg,correct){
+        const area=document.getElementById('feedbackArea');if(!area)return;
+        area.innerHTML=`<div class="feedback ${correct===true?'correct':correct===false?'incorrect':'info'}">${esc(msg)}</div>`;
+    }
+
+    function updateTeamProgress(data){
+        const bar=document.getElementById('teamProgressBar');
+        if(bar){bar.style.display='block';bar.textContent=data.message||`${data.solvedCount}/${data.totalCount} haben geloest`;}
+    }
+
+    // ========== RESULTS ==========
+    function displayResults(teams){
+        const list=document.getElementById('resultsList');
+        list.innerHTML=teams.map((t,i)=>{
+            const medal=i===0?'\uD83E\uDD47':i===1?'\uD83E\uDD48':i===2?'\uD83E\uDD49':(i+1)+'.';
+            return `<div class="result-card" style="border-color:${t.color};">
+                <div class="result-rank">${medal}</div>
+                <div class="result-info">
+                    <div class="result-team-name" style="color:${t.color};">${t.name}</div>
+                    <div class="result-details">Raeume: ${t.rooms}/${t.totalRooms}${t.time?' | Zeit: '+t.time:' | Nicht fertig'}${t.hints>0?' | '+t.hints+' Hinweise':''}</div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ========== HELPERS ==========
+    function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+    function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+    // ========== INIT ==========
+    document.addEventListener('DOMContentLoaded',()=>{
+        document.addEventListener('keypress',e=>{if(e.key==='Enter'){
+            const ai=document.getElementById('answerInput');
+            if(ai&&document.activeElement===ai)submitText();
+            else if(document.activeElement===document.getElementById('playerName'))joinGame();
+        }});
+        const saved=localStorage.getItem('escapeRoomName');
+        if(saved)document.getElementById('playerName').value=saved;
+        document.getElementById('playerName').focus();
+    });
     </script>
 </body>
 </html>
