@@ -383,6 +383,10 @@
             case 'image':puzzleHTML=renderImage(data);break;
             case 'hidden':puzzleHTML=renderHidden(data);break;
             case 'elimination':puzzleHTML=renderElimination(data);break;
+            case 'quiz':puzzleHTML=renderQuiz(data);break;
+            case 'matching':puzzleHTML=renderMatching(data);break;
+            case 'cipher':puzzleHTML=renderCipher(data);break;
+            case 'cloze':puzzleHTML=renderCloze(data);break;
             default:puzzleHTML=renderCollaborative(data);
         }
 
@@ -789,6 +793,36 @@
         }
     }
 
+    // ========== QUIZ ==========
+    function renderQuiz(data){
+        const p=data.puzzle;window._selectedChoice=null;
+        const opts=(p.options||[]).map(o=>`<div class="choice-btn" style="font-size:1.05em;text-align:left" data-val="${esc(o.id)}" onclick="selectChoice(this,'${o.id}')">${esc(o.display)}</div>`).join('');
+        return `<div class="puzzle-desc">${esc(p.description)}</div>${renderFragments(data)}<div class="choice-grid" style="grid-template-columns:1fr">${opts}</div><div class="answer-section"><div class="answer-buttons"><button class="btn-submit" onclick="submitChoice()">Absenden</button><button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button></div></div>`;
+    }
+
+    // ========== MATCHING (Zuordnung) ==========
+    function renderMatching(data){
+        const p=data.puzzle,lefts=p.lefts||[],rights=p.rights||[];
+        const rows=lefts.map((l,idx)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="flex:1;padding:10px;background:rgba(255,255,255,0.08);border-radius:10px">${esc(l.text)}</div><span style="opacity:0.6">↔</span><select class="match-sel" data-idx="${idx}" style="flex:1;padding:10px;border-radius:10px;background:rgba(255,255,255,0.1);color:#fff;border:2px solid rgba(255,255,255,0.2)"><option value="">– wählen –</option>${rights.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('')}</select></div>`).join('');
+        return `<div class="puzzle-desc">${esc(p.description)}</div>${renderFragments(data)}<div style="margin:10px 0">${rows}</div><div class="answer-section"><div class="answer-buttons"><button class="btn-submit" onclick="submitMatching()">Absenden</button><button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button></div></div>`;
+    }
+    function submitMatching(){const sels=Array.from(document.querySelectorAll('.match-sel'));const ans=sels.map(s=>s.value);if(ans.some(v=>!v)){showFeedback('Bitte ordne allen Begriffen etwas zu!',false);return;}sendAnswer(ans);}
+
+    // ========== CIPHER (Geheimcode) ==========
+    function renderCipher(data){
+        const p=data.puzzle;
+        return `<div class="puzzle-desc">${esc(p.description)}</div>${renderFragments(data)}<div style="font-family:'Courier New',monospace;font-size:1.5em;letter-spacing:3px;text-align:center;padding:16px;background:rgba(0,0,0,0.3);border-radius:12px;margin:10px 0;word-break:break-word">${esc(p.cipherText||'')}</div><div class="lock-clue">${esc(p.clueText||'')}</div><div class="answer-section"><input type="text" class="answer-input" id="answerInput" placeholder="LÖSUNG" autocomplete="off" autocapitalize="characters"><div class="answer-buttons"><button class="btn-submit" onclick="submitText()">Absenden</button><button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button></div></div>`;
+    }
+
+    // ========== CLOZE (Lückentext) ==========
+    function clozeParse(text){const parts=String(text||'').split(/(\{[^}]*\})/);const segs=[],blanks=[];parts.forEach(pt=>{if(/^\{[^}]*\}$/.test(pt)){blanks.push(pt.slice(1,-1));segs.push({b:blanks.length-1});}else if(pt!==''){segs.push({t:pt});}});return{segs,blanks};}
+    function renderCloze(data){
+        const p=data.puzzle,segs=p.segments||[];
+        const body=segs.map(s=>s.t!=null?esc(s.t):`<input type="text" class="cloze-inp" data-b="${s.b}" autocomplete="off" style="display:inline-block;width:110px;padding:4px 8px;margin:2px;font-size:1em;text-align:center;border:none;border-bottom:2px solid #00d4ff;background:rgba(0,212,255,0.1);color:#fff;border-radius:6px 6px 0 0">`).join('');
+        return `<div class="puzzle-desc">${esc(p.description)}</div>${renderFragments(data)}<div style="line-height:2.4;font-size:1.05em;padding:8px">${body}</div><div class="answer-section"><div class="answer-buttons"><button class="btn-submit" onclick="submitCloze()">Absenden</button><button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button></div></div>`;
+    }
+    function submitCloze(){const inps=Array.from(document.querySelectorAll('.cloze-inp')).sort((a,b)=>(+a.dataset.b)-(+b.dataset.b));const ans=inps.map(i=>i.value);if(ans.some(v=>!v.trim())){showFeedback('Bitte fülle alle Lücken aus!',false);return;}sendAnswer(ans);}
+
     // ========== TOUCH DRAG ENGINE ==========
     function initDragEngine(){
         const list=document.getElementById('sortList');
@@ -930,6 +964,8 @@
         const pd=JSON.parse(JSON.stringify(room.puzzle));
         delete pd.solution;delete pd.correctOrder;
         if(pd.options)pd.options.forEach(o=>{delete o.correct;delete o.order;});
+        if(pd.type==='matching'&&pd.pairs){pd.lefts=pd.pairs.map(pr=>({id:pr.id,text:pr.left}));pd.rights=pd.pairs.map(pr=>pr.right).sort(()=>Math.random()-0.5);delete pd.pairs;}
+        if(pd.type==='cloze'){const cp=clozeParse(pd.text);pd.segments=cp.segs;delete pd.text;}
         let fragments=null;
         if(pd.collaborative&&pd.fragments&&pd.fragments.length){fragments=pd.fragments;}
         delete pd.fragments;
@@ -949,6 +985,9 @@
             case 'ordered_select':{const cs=[...(puzzle.options||[])].sort((a,b)=>(a.order||0)-(b.order||0)).map(o=>o.id);ok=JSON.stringify(answer)===JSON.stringify(cs);}break;
             case 'choice':ok=String(answer)===String(puzzle.solution);break;
             case 'directions':ok=JSON.stringify(answer)===JSON.stringify(puzzle.solution);break;
+            case 'single_select':{const o=(puzzle.options||[]).find(o=>o.id===answer);ok=!!(o&&o.correct);}break;
+            case 'matching':{const a=answer||[];const pr=puzzle.pairs||[];ok=a.length===pr.length&&pr.every((p2,idx)=>String(a[idx]||'').trim()===String(p2.right).trim());}break;
+            case 'cloze':{const bl=clozeParse(puzzle.text).blanks;const a=answer||[];ok=bl.length>0&&a.length===bl.length&&bl.every((b,idx)=>String(a[idx]||'').trim().toLowerCase()===String(b).trim().toLowerCase());}break;
         }
         if(ok){showFeedback(previewRooms[previewIndex].storySuccess||'Richtig!',true);playSound('correct');vibrate([100,50,100]);disableInput();previewIndex++;setTimeout(showPreviewRoom,1600);}
         else{showFeedback('Falsch! Nochmal versuchen...',false);playSound('wrong');vibrate(150);}

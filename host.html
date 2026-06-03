@@ -67,6 +67,10 @@
         .type-image{background:rgba(168,85,247,0.2);color:#a855f7}
         .type-hidden{background:rgba(0,212,255,0.2);color:#00d4ff}
         .type-elimination{background:rgba(59,130,246,0.2);color:#3b82f6}
+        .type-quiz{background:rgba(236,72,153,0.2);color:#ec4899}
+        .type-matching{background:rgba(20,184,166,0.2);color:#14b8a6}
+        .type-cipher{background:rgba(132,204,22,0.2);color:#84cc16}
+        .type-cloze{background:rgba(99,102,241,0.2);color:#6366f1}
         .room-detail{display:none;margin-top:12px}.room-detail.open{display:block}
         .field{margin-bottom:10px}
         .field label{display:block;margin-bottom:4px;font-size:0.85em;color:#aaa}
@@ -284,9 +288,9 @@
         <div class="field"><label>Story Intro</label><textarea rows="2" onchange="rooms[${i}].storyIntro=this.value">${esc(r.storyIntro||'')}</textarea></div>
         <div class="field"><label>Story Erfolg</label><input value="${esc(r.storySuccess||'')}" onchange="rooms[${i}].storySuccess=this.value"></div>
         <div class="field"><label>Rätseltyp</label><div class="type-selector">
-            ${['collaborative','lock','sorting','image','hidden','elimination'].map(t=>{
-                const icons={collaborative:'🗣️',lock:'🔒',sorting:'🔀',image:'🎨',hidden:'🔍',elimination:'✅'};
-                const names={collaborative:'Teamwork',lock:'Schloss',sorting:'Reihenfolge',image:'Bilder/Emoji',hidden:'Suche&Finde',elimination:'Auswahl'};
+            ${['collaborative','lock','sorting','image','hidden','elimination','quiz','matching','cipher','cloze'].map(t=>{
+                const icons={collaborative:'🗣️',lock:'🔒',sorting:'🔀',image:'🎨',hidden:'🔍',elimination:'✅',quiz:'❓',matching:'🔗',cipher:'🔐',cloze:'📝'};
+                const names={collaborative:'Teamwork',lock:'Schloss',sorting:'Reihenfolge',image:'Bilder/Emoji',hidden:'Suche&Finde',elimination:'Auswahl',quiz:'Quiz',matching:'Zuordnen',cipher:'Geheimcode',cloze:'Lückentext'};
                 return `<div class="type-option ${p.type===t?'selected':''}" onclick="changeType(${i},'${t}')"><div class="type-icon">${icons[t]}</div><div class="type-name">${names[t]}</div></div>`;}).join('')}
         </div></div>
         <div class="field"><label>Beschreibung</label><input value="${esc(p.description||'')}" onchange="rooms[${i}].puzzle.description=this.value"></div>
@@ -329,6 +333,21 @@
             html+=`<div class="subtype-selector">${['select_all','eliminate','sequence'].map(st=>`<div class="subtype-btn ${(p.subtype||'select_all')===st?'active':''}" onclick="rooms[${i}].puzzle.subtype='${st}';rooms[${i}].puzzle.solutionType='${st==='sequence'?'ordered_select':'multi_select'}';renderRoomEditor()">${{select_all:'Alle richtigen',eliminate:'Falsche streichen',sequence:'Reihenfolge'}[st]}</div>`).join('')}</div>
             <div class="field"><label>Optionen</label><div class="dynamic-list">${(p.options||[]).map((o,oi)=>`<div class="dynamic-item"><input value="${esc(o.display||'')}" onchange="rooms[${i}].puzzle.options[${oi}].display=this.value" placeholder="Antwort" style="flex:1">${(p.subtype||'select_all')!=='sequence'?`<label style="font-size:0.8em"><input type="checkbox" ${o.correct?'checked':''} onchange="rooms[${i}].puzzle.options[${oi}].correct=this.checked"> Richtig</label>`:`<input type="number" min="1" value="${o.order||oi+1}" style="width:40px" onchange="rooms[${i}].puzzle.options[${oi}].order=parseInt(this.value)" title="Nr">`}<button class="btn-sm btn-delete" onclick="rooms[${i}].puzzle.options.splice(${oi},1);renderRoomEditor()">X</button></div>`).join('')}</div><button class="btn-sm btn-secondary" onclick="rooms[${i}].puzzle.options=rooms[${i}].puzzle.options||[];rooms[${i}].puzzle.options.push({id:'o'+Date.now(),display:'',correct:false,order:rooms[${i}].puzzle.options.length+1});renderRoomEditor()">+ Option</button></div>`;
         }
+        if(t==='quiz'){
+            html+=`<div class="field"><label>Antwortoptionen (mind. eine als richtig markieren)</label><div class="dynamic-list">${(p.options||[]).map((o,oi)=>`<div class="dynamic-item"><input value="${esc(o.display||'')}" onchange="rooms[${i}].puzzle.options[${oi}].display=this.value" placeholder="Antwort" style="flex:1"><label style="font-size:0.8em;white-space:nowrap"><input type="checkbox" ${o.correct?'checked':''} onchange="rooms[${i}].puzzle.options[${oi}].correct=this.checked"> Richtig</label><button class="btn-sm btn-delete" onclick="rooms[${i}].puzzle.options.splice(${oi},1);renderRoomEditor()">X</button></div>`).join('')}</div><button class="btn-sm btn-secondary" onclick="rooms[${i}].puzzle.options=rooms[${i}].puzzle.options||[];rooms[${i}].puzzle.options.push({id:'q'+Date.now(),display:'',correct:false});renderRoomEditor()">+ Antwort</button></div>`;
+        }
+        if(t==='matching'){
+            html+=`<div class="field"><label>Paare – Begriff ↔ passende Antwort</label><div class="dynamic-list">${(p.pairs||[]).map((pr,pi)=>`<div class="dynamic-item"><input value="${esc(pr.left||'')}" onchange="rooms[${i}].puzzle.pairs[${pi}].left=this.value" placeholder="Begriff"><span style="opacity:0.6">↔</span><input value="${esc(pr.right||'')}" onchange="rooms[${i}].puzzle.pairs[${pi}].right=this.value" placeholder="passt zu"><button class="btn-sm btn-delete" onclick="rooms[${i}].puzzle.pairs.splice(${pi},1);renderRoomEditor()">X</button></div>`).join('')}</div><button class="btn-sm btn-secondary" onclick="rooms[${i}].puzzle.pairs=rooms[${i}].puzzle.pairs||[];rooms[${i}].puzzle.pairs.push({id:'p'+Date.now(),left:'',right:''});renderRoomEditor()">+ Paar</button></div>`;
+        }
+        if(t==='cipher'){
+            html+=`<div class="field"><label>Lösung (Klartext, den die SuS herausfinden)</label><input value="${esc(p.solution||'')}" onchange="rooms[${i}].puzzle.solution=this.value" style="font-weight:bold;color:#4ade80"></div>
+            <div class="inline-fields"><div class="field"><label>Verschiebung</label><input type="number" id="cipherShift${i}" value="3" min="1" max="25"></div><div class="field" style="display:flex;align-items:flex-end"><button class="btn-sm btn-secondary" onclick="cipherGen(${i})" style="width:100%">🔐 Geheimtext erzeugen</button></div></div>
+            <div class="field"><label>Geheimtext (wird den SuS angezeigt)</label><input value="${esc(p.cipherText||'')}" onchange="rooms[${i}].puzzle.cipherText=this.value"></div>
+            <div class="field"><label>Hinweis / Schlüssel</label><input value="${esc(p.clueText||'')}" onchange="rooms[${i}].puzzle.clueText=this.value" placeholder="z.B. Jeder Buchstabe ist um 3 verschoben (A wird zu D)"></div>`;
+        }
+        if(t==='cloze'){
+            html+=`<div class="field"><label>Lückentext – Lösungswörter in {geschweifte Klammern} setzen</label><textarea rows="4" onchange="rooms[${i}].puzzle.text=this.value" placeholder="Die Hauptstadt von Frankreich ist {Paris}.">${esc(p.text||'')}</textarea><div style="font-size:0.78em;color:#aaa;margin-top:4px">Beispiel: „...ist {Paris}." → „Paris" wird zur ausfüllbaren Lücke.</div></div>`;
+        }
         return html;
     }
 
@@ -339,7 +358,13 @@
         if(newType==='image')Object.assign(base,{subtype:'emoji_equation',solutionType:'text',equations:[{display:'',info:true}]});
         if(newType==='hidden')Object.assign(base,{solutionType:'text',scene:{width:5,height:4,objects:[]}});
         if(newType==='elimination')Object.assign(base,{subtype:'select_all',solutionType:'multi_select',options:old.options||[{id:'o1',display:'',correct:false}]});
+        if(newType==='quiz')Object.assign(base,{solutionType:'single_select',options:old.options||[{id:'q1',display:'',correct:true},{id:'q2',display:'',correct:false}]});
+        if(newType==='matching')Object.assign(base,{solutionType:'matching',pairs:old.pairs||[{id:'p1',left:'',right:''},{id:'p2',left:'',right:''}]});
+        if(newType==='cipher')Object.assign(base,{solutionType:'text',cipherText:'',clueText:''});
+        if(newType==='cloze')Object.assign(base,{solutionType:'cloze',text:''});
         rooms[i].puzzle=base;renderRoomEditor();}
+    function cipherGen(i){const sol=(rooms[i].puzzle.solution||'').toUpperCase();const shift=parseInt(document.getElementById('cipherShift'+i).value)||3;let out='';for(const ch of sol){const c=ch.charCodeAt(0);out+=(c>=65&&c<=90)?String.fromCharCode((c-65+shift)%26+65):ch;}rooms[i].puzzle.cipherText=out;rooms[i].puzzle.clueText='Caesar-Verschluesselung: jeder Buchstabe ist um '+shift+' Stellen verschoben.';renderRoomEditor();}
+    function clozeParse(text){const parts=String(text||'').split(/(\{[^}]*\})/);const segs=[],blanks=[];parts.forEach(pt=>{if(/^\{[^}]*\}$/.test(pt)){blanks.push(pt.slice(1,-1));segs.push({b:blanks.length-1});}else if(pt!==''){segs.push({t:pt});}});return{segs,blanks};}
     function addFragment(i){const f=rooms[i].puzzle.fragments=rooms[i].puzzle.fragments||[];f.push({label:'Fragment '+String.fromCharCode(65+f.length),text:''});renderRoomEditor();}
     function addSortItem(i){const it=rooms[i].puzzle.items=rooms[i].puzzle.items||[];it.push({id:'s'+Date.now(),display:'',emoji:''});updateSortOrder(i);renderRoomEditor();}
     function updateSortOrder(i){rooms[i].puzzle.correctOrder=(rooms[i].puzzle.items||[]).map(it=>it.id);}
@@ -398,6 +423,8 @@
         const room=rooms[roomIndex];const p=room.puzzle;const player=players.find(pl=>pl.id===playerId);const team=teams[teamKey];
         const puzzleData=JSON.parse(JSON.stringify(p));delete puzzleData.solution;delete puzzleData.correctOrder;
         if(puzzleData.options)puzzleData.options.forEach(o=>{delete o.correct;delete o.order;});
+        if(p.type==='matching'&&p.pairs){puzzleData.lefts=p.pairs.map(pr=>({id:pr.id,text:pr.left}));puzzleData.rights=p.pairs.map(pr=>pr.right).sort(()=>Math.random()-0.5);delete puzzleData.pairs;}
+        if(p.type==='cloze'){const cp=clozeParse(p.text);puzzleData.segments=cp.segs;delete puzzleData.text;}
         let fragments=null;
         if(p.collaborative&&p.fragments&&p.fragments.length>0){const n=team.players.length||1,pi=Math.max(0,team.players.indexOf(player));fragments=p.fragments.filter((f,j)=>j%n===pi);if(!fragments.length)fragments=[p.fragments[pi%p.fragments.length]];delete puzzleData.fragments;}
         c.send({type:'room',roomNumber:roomIndex+1,totalRooms:rooms.length,roomEmoji:room.roomEmoji||'🚪',title:room.title,storyIntro:room.storyIntro||'',teamName:team.emoji+' '+team.name,puzzle:puzzleData,fragment:fragments&&fragments.length?fragments[0]:null,fragments:fragments});
@@ -416,6 +443,9 @@
             case 'ordered_select':const cs=[...puzzle.options].sort((a,b)=>(a.order||0)-(b.order||0)).map(o=>o.id);isCorrect=JSON.stringify(data.answer)===JSON.stringify(cs);break;
             case 'choice':isCorrect=String(data.answer)===String(puzzle.solution);break;
             case 'directions':isCorrect=JSON.stringify(data.answer)===JSON.stringify(puzzle.solution);break;
+            case 'single_select':{const o=(puzzle.options||[]).find(o=>o.id===data.answer);isCorrect=!!(o&&o.correct);}break;
+            case 'matching':{const a=data.answer||[];const pr=puzzle.pairs||[];isCorrect=a.length===pr.length&&pr.every((p2,idx)=>String(a[idx]||'').trim()===String(p2.right).trim());}break;
+            case 'cloze':{const bl=clozeParse(puzzle.text).blanks;const a=data.answer||[];isCorrect=bl.length>0&&a.length===bl.length&&bl.every((b,idx)=>String(a[idx]||'').trim().toLowerCase()===String(b).trim().toLowerCase());}break;
         }
         if(isCorrect){if(c)c.send({type:'feedback',correct:true,message:'Richtig! Warte auf dein Team...'});
             if(!player.completedCurrentRoom){player.completedCurrentRoom=true;
