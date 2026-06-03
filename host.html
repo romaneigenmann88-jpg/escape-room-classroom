@@ -361,9 +361,9 @@
         const room=rooms[roomIndex];const p=room.puzzle;const player=players.find(pl=>pl.id===playerId);const team=teams[teamKey];
         const puzzleData=JSON.parse(JSON.stringify(p));delete puzzleData.solution;delete puzzleData.correctOrder;
         if(puzzleData.options)puzzleData.options.forEach(o=>{delete o.correct;delete o.order;});
-        let fragment=null;
-        if(p.collaborative&&p.fragments&&p.fragments.length>0){const idx=team.players.indexOf(player)%p.fragments.length;fragment=p.fragments[idx];delete puzzleData.fragments;}
-        c.send({type:'room',roomNumber:roomIndex+1,totalRooms:rooms.length,roomEmoji:room.roomEmoji||'\uD83D\uDEAA',title:room.title,storyIntro:room.storyIntro||'',teamName:team.emoji+' '+team.name,puzzle:puzzleData,fragment:fragment});
+        let fragments=null;
+        if(p.collaborative&&p.fragments&&p.fragments.length>0){const n=team.players.length||1,pi=Math.max(0,team.players.indexOf(player));fragments=p.fragments.filter((f,j)=>j%n===pi);if(!fragments.length)fragments=[p.fragments[pi%p.fragments.length]];delete puzzleData.fragments;}
+        c.send({type:'room',roomNumber:roomIndex+1,totalRooms:rooms.length,roomEmoji:room.roomEmoji||'\uD83D\uDEAA',title:room.title,storyIntro:room.storyIntro||'',teamName:team.emoji+' '+team.name,puzzle:puzzleData,fragment:fragments&&fragments.length?fragments[0]:null,fragments:fragments});
     }
 
     function checkAnswer(playerId,data){

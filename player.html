@@ -415,13 +415,20 @@
         inputs.forEach(el=>el.disabled=true);
     }
 
+    // ========== FRAGMENTS (ein oder mehrere, je nach Teamgroesse) ==========
+    function renderFragments(data){
+        const frags=data.fragments||(data.fragment?[data.fragment]:[]);
+        if(!frags.length)return '';
+        return frags.map(f=>`<div class="fragment-box"><div class="fragment-label">${esc(f.label)}</div><div class="fragment-text">${esc(f.text)}</div></div>`).join('');
+    }
+
     // ========== COLLABORATIVE RENDERER ==========
     function renderCollaborative(data){
-        const p=data.puzzle,frag=data.fragment;
+        const p=data.puzzle;
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
             ${p.collaborative!==false?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team! Jeder sieht einen anderen Hinweis.</div>`:''}
-            ${frag?`<div class="fragment-box"><div class="fragment-label">${esc(frag.label)}</div><div class="fragment-text">${esc(frag.text)}</div></div>`:''}
+            ${renderFragments(data)}
             <div class="team-progress-bar" id="teamProgressBar" style="display:none;"></div>
             <div class="answer-section">
                 <input type="text" class="answer-input" id="answerInput" placeholder="ANTWORT" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
@@ -449,7 +456,7 @@
 
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
-            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            ${renderFragments(data)}
             ${p.collaborative!==false&&data.fragment?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team!</div>`:''}
             <div class="lock-container">
                 <div class="lock-shackle" id="lockShackle"></div>
@@ -469,7 +476,7 @@
         const p=data.puzzle;
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
-            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            ${renderFragments(data)}
             <div class="dpad-container">
                 <div class="dir-sequence" id="dirSequence"></div>
                 <div class="dpad">
@@ -526,7 +533,7 @@
         window._sortItems=items;
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
-            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            ${renderFragments(data)}
             ${p.collaborative&&data.fragment?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team!</div>`:''}
             <div class="sort-list" id="sortList">
                 ${items.map((it,i)=>`
@@ -612,7 +619,7 @@
         const opts=(p.options||[]).map((o,i)=>`<div class="choice-btn" data-val="${esc(o)}" onclick="selectChoice(this,'${esc(o)}')">${o}</div>`).join('');
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
-            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            ${renderFragments(data)}
             <div class="pattern-display">${pattern}</div>
             <div class="choice-grid">${opts}</div>
             <div class="answer-section">
@@ -723,7 +730,7 @@
 
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
-            ${data.fragment?`<div class="fragment-box"><div class="fragment-label">${esc(data.fragment.label)}</div><div class="fragment-text">${esc(data.fragment.text)}</div></div>`:''}
+            ${renderFragments(data)}
             ${p.collaborative&&data.fragment?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team!</div>`:''}
             ${badge}
             ${sub==='sequence'?'<div class="seq-display" id="seqDisplay"></div>':''}
