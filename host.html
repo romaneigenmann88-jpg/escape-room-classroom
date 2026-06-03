@@ -130,6 +130,15 @@
         .template-card .tpl-name{font-weight:bold;font-size:0.95em}
         .template-card .tpl-desc{font-size:0.75em;color:#aaa;margin-top:4px}
         @media(max-width:768px){h1{font-size:1.9em}.lobby-section{flex-direction:column}.type-selector{grid-template-columns:repeat(2,1fr)}.inline-fields{grid-template-columns:1fr}}
+        /* EMOJI PICKER */
+        .emoji-cats{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+        .emoji-cat-btn{padding:5px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#ccc;cursor:pointer;font-size:0.78em}
+        .emoji-cat-btn.active{background:rgba(0,212,255,0.15);border-color:#00d4ff;color:#00d4ff}
+        .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-height:260px;overflow-y:auto;padding:4px}
+        .emoji-cell{font-size:1.5em;padding:6px 0;text-align:center;cursor:pointer;border-radius:8px;background:rgba(255,255,255,0.04);border:none;color:inherit}
+        .emoji-cell:hover{background:rgba(0,212,255,0.2)}
+        .emoji-hint{font-size:0.82em;color:#bbb;margin-bottom:12px;padding:8px 10px;background:rgba(0,212,255,0.08);border-radius:8px;border:1px solid rgba(0,212,255,0.15)}
+        .btn-emoji{background:rgba(245,158,11,0.18);color:#f59e0b;border:1px solid #f59e0b}
     </style>
 </head>
 <body>
@@ -164,8 +173,10 @@
                             <button class="btn-sm btn-secondary" onclick="showTemplates()">Vorlagen</button>
                             <button class="btn-sm btn-secondary" onclick="exportRooms()">Export</button>
                             <button class="btn-sm btn-secondary" onclick="showImportModal()">Import</button>
+                            <button class="btn-sm btn-emoji" onclick="openEmojiPicker()">😀 Emoji</button>
                         </div>
                     </div>
+                    <div class="emoji-hint">💡 Tipp: Klicke in ein Feld (z.B. Emoji- oder Textfeld) und dann oben auf „😀 Emoji", um ein Symbol auszuwählen – du musst keine Codes kennen. (Alternativ: Windows-Taste + Punkt.)</div>
                     <div id="roomEditor"></div>
                 </div>
             </div>
@@ -197,6 +208,25 @@
         <div class="template-card" onclick="loadTemplate('leer')"><div class="tpl-icon">📝</div><div class="tpl-name">Leer</div><div class="tpl-desc">1 leerer Raum</div></div>
     </div><div class="modal-actions"><button class="btn-sm btn-secondary" onclick="closeTemplateModal()">Abbrechen</button></div></div></div>
 
+    <div id="emojiPicker" class="modal-overlay hidden"><div class="modal" style="max-width:480px"><h3>Emoji auswählen</h3><div class="emoji-cats" id="emojiCats"></div><div class="emoji-grid" id="emojiGrid"></div><div class="modal-actions"><button class="btn-sm btn-secondary" onclick="closeEmojiPicker()">Schließen</button></div></div></div>
+
+    <script>
+    // ========== EMOJI PICKER ==========
+    const EMOJI_CATEGORIES={
+        'Zahlen':['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟','➕','➖','✖️','➗','🟰','❓','❗','✅','❌','⭐','💯'],
+        'Pfeile & Formen':['⬆️','⬇️','⬅️','➡️','↗️','↘️','↙️','↖️','🔺','🔻','🔼','🔽','🔴','🔵','🟢','🟡','🟣','🟠','⚪','⚫','🟥','🟦','🟩','🟨','⬛','⬜'],
+        'Schule':['📚','📖','📝','✏️','🖊️','📐','📏','🔍','🔑','🗝️','🧭','🔬','🧪','⚗️','🗺️','📜','📌','🧩','🎲','🎯','💡','🔒','🔓','🚪','⏳','🔔','🏆','🎓'],
+        'Natur & Tiere':['🌍','🌙','☀️','⭐','🌈','🔥','💧','🌳','🌲','🌵','🍎','🍌','🍒','🍇','🐕','🐈','🐍','🐦','🦅','🦇','🐋','🐸','🦁','🐘','🐝','🦋','🐢','🐙'],
+        'Orte & Dinge':['🏰','🏛️','🗼','🏠','🏫','⛪','🌋','⛰️','💎','👑','⚓','🗡️','🛡️','🔦','💰','📦','🎁','🧱','🪜','🕯️','🎒','🧲'],
+        'Gesichter':['😀','😃','😄','😎','🤔','🙂','😉','😮','😯','😱','🤓','🧐','👀','👍','👎','👋','✋','👉','🙌','🤝']
+    };
+    let lastEmojiField=null;
+    document.addEventListener('focusin',e=>{const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA')&&t.closest&&t.closest('#roomEditor'))lastEmojiField=t;});
+    function openEmojiPicker(){if(!lastEmojiField){alert('Klicke zuerst in das Feld, in das das Emoji eingefügt werden soll.');return;}renderEmojiGrid(0);document.getElementById('emojiPicker').classList.remove('hidden');}
+    function closeEmojiPicker(){document.getElementById('emojiPicker').classList.add('hidden');}
+    function renderEmojiGrid(i){const keys=Object.keys(EMOJI_CATEGORIES);const cat=keys[i]||keys[0];document.getElementById('emojiCats').innerHTML=keys.map((k,j)=>`<button class="emoji-cat-btn ${j===i?'active':''}" onclick="renderEmojiGrid(${j})">${k}</button>`).join('');document.getElementById('emojiGrid').innerHTML=EMOJI_CATEGORIES[cat].map(e=>`<button class="emoji-cell" onclick="pickEmoji('${e}')">${e}</button>`).join('');}
+    function pickEmoji(emoji){const f=lastEmojiField;if(!f){closeEmojiPicker();return;}const s=(f.selectionStart!=null)?f.selectionStart:f.value.length,en=(f.selectionEnd!=null)?f.selectionEnd:f.value.length;f.value=f.value.slice(0,s)+emoji+f.value.slice(en);f.dispatchEvent(new Event('change',{bubbles:true}));closeEmojiPicker();}
+    </script>
     <script>
     let peer=null,connections=new Map(),players=[],gameStarted=false,startTime=null,timerInterval=null;
     const TEAM_DEFS=[{key:'red',name:'Rotes Team',color:'#ef4444',emoji:'🔴'},{key:'blue',name:'Blaues Team',color:'#3b82f6',emoji:'🔵'},{key:'green',name:'Grünes Team',color:'#22c55e',emoji:'🟢'},{key:'yellow',name:'Gelbes Team',color:'#eab308',emoji:'🟡'},{key:'purple',name:'Lila Team',color:'#a855f7',emoji:'🟣'},{key:'orange',name:'Oranges Team',color:'#f97316',emoji:'🟠'}];
