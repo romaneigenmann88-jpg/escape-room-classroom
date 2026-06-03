@@ -1,0 +1,409 @@
+[
+  {
+    "id": "d1",
+    "title": "Das Tor der Begriffe",
+    "roomEmoji": "📐",
+    "storyIntro": "Willkommen im Labor von Professor Triangulus! Die erste Tür öffnet nur, wer die Grundbegriffe kennt.",
+    "storySuccess": "Die Begriffe stimmen – das Tor schwingt auf!",
+    "puzzle": {
+      "type": "cloze",
+      "solutionType": "cloze",
+      "description": "Füllt die Lücken zu den Grundlagen am Dreieck.",
+      "text": "Ein Dreieck hat drei Ecken und drei {Seiten}. Alle drei Innenwinkel ergeben zusammen {180} Grad. Die Summe aller Seitenlängen heisst {Umfang}. Multipliziert man Grundlinie mal Höhe und teilt durch {2}, erhält man die Fläche.",
+      "hints": [
+        "Ein Dreieck hat drei Seiten",
+        "Die Winkelsumme ist 180 Grad",
+        "Fläche = Grundlinie · Höhe ÷ 2"
+      ]
+    }
+  },
+  {
+    "id": "d2",
+    "title": "Die Begriffs-Werkstatt",
+    "roomEmoji": "🔗",
+    "storyIntro": "An der Wand hängen Fachbegriffe und ihre Bedeutungen wild durcheinander. Ordnet sie richtig zu!",
+    "storySuccess": "Alles richtig zugeordnet – weiter geht's!",
+    "puzzle": {
+      "type": "matching",
+      "solutionType": "matching",
+      "description": "Ordnet jedem Fachbegriff die passende Bedeutung zu.",
+      "pairs": [
+        {
+          "id": "m1",
+          "left": "Höhe",
+          "right": "steht senkrecht auf einer Seite"
+        },
+        {
+          "id": "m2",
+          "left": "Schwerelinie",
+          "right": "verbindet eine Ecke mit der Mitte der Gegenseite"
+        },
+        {
+          "id": "m3",
+          "left": "Schwerpunkt",
+          "right": "Schnittpunkt der drei Schwerelinien"
+        },
+        {
+          "id": "m4",
+          "left": "Umfang",
+          "right": "Summe der drei Seitenlängen"
+        },
+        {
+          "id": "m5",
+          "left": "Fläche",
+          "right": "Grundlinie mal Höhe geteilt durch 2"
+        }
+      ],
+      "hints": [
+        "Die Schwerelinie geht zur Seiten-MITTE",
+        "Der Schwerpunkt ist ein Schnittpunkt",
+        "Die Höhe steht im rechten Winkel auf der Seite"
+      ]
+    }
+  },
+  {
+    "id": "d3",
+    "title": "Das Quiz der Linien",
+    "roomEmoji": "🧠",
+    "storyIntro": "Ein Bildschirm zeigt eine Frage über die besonderen Linien im Dreieck.",
+    "storySuccess": "Richtig erkannt!",
+    "puzzle": {
+      "type": "quiz",
+      "solutionType": "single_select",
+      "description": "Welche Aussage über die speziellen Linien stimmt?",
+      "options": [
+        {
+          "id": "q1",
+          "display": "Der Schwerpunkt teilt jede Schwerelinie im Verhältnis 2:1",
+          "correct": true
+        },
+        {
+          "id": "q2",
+          "display": "Die Höhe verbindet immer zwei Ecken",
+          "correct": false
+        },
+        {
+          "id": "q3",
+          "display": "Ein Dreieck hat vier Schwerelinien",
+          "correct": false
+        },
+        {
+          "id": "q4",
+          "display": "Der Schwerpunkt liegt immer ausserhalb des Dreiecks",
+          "correct": false
+        }
+      ],
+      "hints": [
+        "Es gibt genau 3 Schwerelinien",
+        "Der Schwerpunkt liegt innen",
+        "2:1 – der längere Teil liegt bei der Ecke"
+      ]
+    }
+  },
+  {
+    "id": "d4",
+    "title": "Das Winkel-Schloss",
+    "roomEmoji": "🔒",
+    "storyIntro": "Ein Zahlenschloss sperrt den Weg. Jedes Teammitglied kennt nur einen Teil der Winkel – redet miteinander!",
+    "storySuccess": "Klick! Der fehlende Winkel war richtig.",
+    "puzzle": {
+      "type": "lock",
+      "subtype": "number_lock",
+      "solutionType": "lock",
+      "collaborative": true,
+      "description": "Knackt das Schloss gemeinsam: Stellt den fehlenden Winkel ein.",
+      "digits": 2,
+      "solution": "45",
+      "clueText": "Die Winkelsumme im Dreieck beträgt 180°.",
+      "fragments": [
+        {
+          "label": "Plan A",
+          "text": "Im Dreieck ABC beträgt der Winkel bei A genau 75°."
+        },
+        {
+          "label": "Plan B",
+          "text": "Im Dreieck ABC beträgt der Winkel bei B genau 60°."
+        },
+        {
+          "label": "Plan C",
+          "text": "Der Winkel bei C fehlt. Berechnet ihn (180° − A − B) und stellt ihn ein."
+        }
+      ],
+      "hints": [
+        "Alle drei Winkel zusammen = 180°",
+        "180 − 75 − 60",
+        "Der fehlende Winkel ist 45°"
+      ]
+    }
+  },
+  {
+    "id": "d5",
+    "title": "Das vermessene Grundstück",
+    "roomEmoji": "🔍",
+    "storyIntro": "Ein dreieckiges Grundstück soll eingezäunt werden. Sucht im Raum die drei Seitenlängen!",
+    "storySuccess": "Der Zaun passt genau – Tür offen!",
+    "puzzle": {
+      "type": "hidden",
+      "solutionType": "text",
+      "description": "Durchsucht den Raum, findet die drei Seitenlängen und berechnet den Umfang (in Metern).",
+      "scene": {
+        "width": 5,
+        "height": 4,
+        "objects": [
+          {
+            "emoji": "📐",
+            "x": 0,
+            "y": 0,
+            "clickable": true,
+            "reveals": "Seite a = 8 m"
+          },
+          {
+            "emoji": "📏",
+            "x": 2,
+            "y": 1,
+            "clickable": true,
+            "reveals": "Seite b = 6 m"
+          },
+          {
+            "emoji": "📜",
+            "x": 4,
+            "y": 0,
+            "clickable": true,
+            "reveals": "Seite c = 10 m"
+          },
+          {
+            "emoji": "🪴",
+            "x": 1,
+            "y": 3,
+            "clickable": true,
+            "reveals": "Nur eine Pflanze – hier ist keine Zahl."
+          },
+          {
+            "emoji": "🗝️",
+            "x": 3,
+            "y": 2,
+            "clickable": true,
+            "reveals": "Notiz: Umfang = a + b + c"
+          },
+          {
+            "emoji": "🐦",
+            "x": 2,
+            "y": 3,
+            "clickable": false
+          }
+        ]
+      },
+      "solution": "24",
+      "hints": [
+        "Umfang = alle Seiten addieren",
+        "8 + 6 + 10",
+        "Der Umfang ist 24 m"
+      ]
+    }
+  },
+  {
+    "id": "d6",
+    "title": "Das Verkehrsschild",
+    "roomEmoji": "⚠️",
+    "storyIntro": "Im Alltag sind Dreiecke überall – zum Beispiel als Warnschild. Berechnet die Fläche!",
+    "storySuccess": "Fläche korrekt berechnet!",
+    "puzzle": {
+      "type": "image",
+      "subtype": "emoji_equation",
+      "solutionType": "text",
+      "description": "Wie viele Quadratzentimeter Fläche hat das dreieckige Warnschild?",
+      "equations": [
+        {
+          "display": "⚠️ Dreieckiges Warnschild",
+          "info": true
+        },
+        {
+          "display": "Grundlinie g = 90 cm",
+          "info": true
+        },
+        {
+          "display": "Höhe h = 80 cm",
+          "info": true
+        },
+        {
+          "display": "Fläche A = (g × h) ÷ 2 = ? cm²",
+          "info": false
+        }
+      ],
+      "solution": "3600",
+      "hints": [
+        "A = Grundlinie · Höhe ÷ 2",
+        "90 · 80 = 7200",
+        "7200 ÷ 2 = 3600 cm²"
+      ]
+    }
+  },
+  {
+    "id": "d7",
+    "title": "Die Flächen-Treppe",
+    "roomEmoji": "📊",
+    "storyIntro": "Vier Dreiecke müssen nach ihrer Fläche geordnet werden – vom kleinsten zum grössten.",
+    "storySuccess": "Perfekt geordnet!",
+    "puzzle": {
+      "type": "sorting",
+      "solutionType": "order",
+      "description": "Berechnet die Flächen und sortiert vom kleinsten zum grössten Flächeninhalt.",
+      "items": [
+        {
+          "id": "t1",
+          "display": "Dreieck P: g = 4 cm, h = 4 cm",
+          "emoji": "🔺"
+        },
+        {
+          "id": "t2",
+          "display": "Dreieck Q: g = 10 cm, h = 3 cm",
+          "emoji": "🔺"
+        },
+        {
+          "id": "t3",
+          "display": "Dreieck R: g = 6 cm, h = 2 cm",
+          "emoji": "🔺"
+        },
+        {
+          "id": "t4",
+          "display": "Dreieck S: g = 5 cm, h = 4 cm",
+          "emoji": "🔺"
+        }
+      ],
+      "correctOrder": [
+        "t3",
+        "t1",
+        "t4",
+        "t2"
+      ],
+      "hints": [
+        "A = g · h ÷ 2",
+        "P = 8, Q = 15, R = 6, S = 10",
+        "Reihenfolge: R, P, S, Q"
+      ]
+    }
+  },
+  {
+    "id": "d8",
+    "title": "Der Tresor der Formeln",
+    "roomEmoji": "🗝️",
+    "storyIntro": "Der grosse Tresor! Jedes Teammitglied erhält eine andere Rechenkarte. Nur zusammen ergibt sich der 4-stellige Code.",
+    "storySuccess": "Der Tresor öffnet sich – ihr seid ein starkes Team!",
+    "puzzle": {
+      "type": "collaborative",
+      "collaborative": true,
+      "solutionType": "text",
+      "description": "Findet den 4-stelligen Code. Jede/r kennt eine Rechnung – sagt euch die Ergebnisse an!",
+      "fragments": [
+        {
+          "label": "Karte A",
+          "text": "1. Ziffer: Ein Dreieck mit g = 6 cm und h = 2 cm. Fläche A = (g·h)÷2 = ? cm²"
+        },
+        {
+          "label": "Karte B",
+          "text": "2. Ziffer: Ein Dreieck mit Fläche A = 20 cm² und g = 10 cm. Höhe h = (2·A)÷g = ?"
+        },
+        {
+          "label": "Karte C",
+          "text": "3. Ziffer: Ein Dreieck mit Fläche A = 12 cm² und h = 8 cm. Grundlinie g = (2·A)÷h = ?"
+        },
+        {
+          "label": "Karte D",
+          "text": "4. Ziffer: Ein gleichseitiges Dreieck hat den Umfang 27 cm. Wie lang ist eine Seite?"
+        }
+      ],
+      "solution": "6439",
+      "hints": [
+        "Fläche = g·h ÷ 2",
+        "Höhe aus Fläche: h = 2·A ÷ g",
+        "Seite aus Fläche: g = 2·A ÷ h; gleichseitig: Umfang ÷ 3",
+        "Der Code ist 6439"
+      ]
+    }
+  },
+  {
+    "id": "d9",
+    "title": "Die Geheimschrift",
+    "roomEmoji": "🔐",
+    "storyIntro": "Auf einer alten Tafel steht ein verschlüsseltes Wort. Entschlüsselt es!",
+    "storySuccess": "Entschlüsselt – das Wort war der Schlüssel!",
+    "puzzle": {
+      "type": "cipher",
+      "solutionType": "text",
+      "description": "Entschlüsselt das geheime Fachwort (es ist der Schnittpunkt der Schwerelinien).",
+      "cipherText": "VFKZHUSXQNW",
+      "clueText": "Caesar-Verschlüsselung: jeder Buchstabe ist um 3 Stellen verschoben (A→D). Verschiebt zurück!",
+      "solution": "SCHWERPUNKT",
+      "hints": [
+        "Verschiebt jeden Buchstaben um 3 zurück (D→A)",
+        "V→S, F→C, K→H ...",
+        "Das Wort ist SCHWERPUNKT"
+      ]
+    }
+  },
+  {
+    "id": "d10",
+    "title": "Das Tor der Wahrheit",
+    "roomEmoji": "🏆",
+    "storyIntro": "Das letzte Tor! Nur wer alle wahren Aussagen erkennt, entkommt. Jede/r kennt einen Wissensteil.",
+    "storySuccess": "IHR SEID FREI! Professor Triangulus gratuliert!",
+    "puzzle": {
+      "type": "elimination",
+      "subtype": "select_all",
+      "solutionType": "multi_select",
+      "collaborative": true,
+      "description": "Wählt ALLE wahren Aussagen über Dreiecke aus.",
+      "options": [
+        {
+          "id": "o1",
+          "display": "Die Winkelsumme beträgt 180°",
+          "correct": true
+        },
+        {
+          "id": "o2",
+          "display": "Der Schwerpunkt teilt die Schwerelinie im Verhältnis 2:1",
+          "correct": true
+        },
+        {
+          "id": "o3",
+          "display": "Die Fläche ist Grundlinie mal Höhe (ohne geteilt durch 2)",
+          "correct": false
+        },
+        {
+          "id": "o4",
+          "display": "Ein Dreieck hat genau 3 Höhen",
+          "correct": true
+        },
+        {
+          "id": "o5",
+          "display": "Die Schwerelinie steht senkrecht auf der Seite",
+          "correct": false
+        },
+        {
+          "id": "o6",
+          "display": "Der Umfang ist die Summe der drei Seiten",
+          "correct": true
+        }
+      ],
+      "fragments": [
+        {
+          "label": "Notiz A",
+          "text": "Du weisst sicher: Ein Dreieck hat 3 Höhen und 3 Schwerelinien."
+        },
+        {
+          "label": "Notiz B",
+          "text": "Du weisst sicher: Die Höhe steht senkrecht, die Schwerelinie führt zur Seitenmitte."
+        },
+        {
+          "label": "Notiz C",
+          "text": "Du weisst sicher: Die Fläche ist immer (Grundlinie·Höhe)÷2 – das ÷2 darf nie fehlen."
+        }
+      ],
+      "hints": [
+        "Achtung bei der Flächenformel (÷2!)",
+        "Höhe ≠ Schwerelinie",
+        "Genau 4 Aussagen sind wahr"
+      ]
+    }
+  }
+]
