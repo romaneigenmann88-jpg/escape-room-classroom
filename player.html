@@ -232,10 +232,10 @@
 
         <div class="screen" id="victoryScreen">
             <div class="victory-container">
-                <div class="victory-icon">\uD83C\uDFC6</div>
+                <div class="victory-icon">🏆</div>
                 <div class="victory-title">GESCHAFFT!</div>
                 <div class="victory-time" id="victoryTime">Zeit: --:--</div>
-                <p style="color:#aaa;font-size:0.95em;">Euer Team hat alle Raeume geloest!</p>
+                <p style="color:#aaa;font-size:0.95em;">Euer Team hat alle Räume gelöst!</p>
             </div>
         </div>
 
@@ -387,7 +387,7 @@
         gc.innerHTML=`
             <div class="team-badge team-${myTeam}" id="teamBadge">${data.teamName||''}</div>
             <div class="room-header">
-                <div class="room-emoji">${data.roomEmoji||'\uD83D\uDEAA'}</div>
+                <div class="room-emoji">${data.roomEmoji||'🚪'}</div>
                 <div class="room-title">${esc(data.title)}</div>
                 <div class="room-progress">${dots}</div>
             </div>
@@ -415,7 +415,7 @@
         inputs.forEach(el=>el.disabled=true);
     }
 
-    // ========== FRAGMENTS (ein oder mehrere, je nach Teamgroesse) ==========
+    // ========== FRAGMENTS (ein oder mehrere, je nach Teamgröße) ==========
     function renderFragments(data){
         const frags=data.fragments||(data.fragment?[data.fragment]:[]);
         if(!frags.length)return '';
@@ -427,7 +427,7 @@
         const p=data.puzzle;
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
-            ${p.collaborative!==false?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team! Jeder sieht einen anderen Hinweis.</div>`:''}
+            ${p.collaborative!==false?`<div class="collab-warning">🗣️ Sprich mit deinem Team! Jeder sieht einen anderen Hinweis.</div>`:''}
             ${renderFragments(data)}
             <div class="team-progress-bar" id="teamProgressBar" style="display:none;"></div>
             <div class="answer-section">
@@ -448,16 +448,16 @@
         const digits=p.digits||4;
         const lockDigits=Array.from({length:digits},(_,i)=>{
             return `<div class="lock-digit">
-                <button class="lock-btn" onclick="lockSpin(${i},1,${isLetter})">\u25B2</button>
+                <button class="lock-btn" onclick="lockSpin(${i},1,${isLetter})">▲</button>
                 <div class="lock-digit-display" id="lockD${i}">${isLetter?'A':'0'}</div>
-                <button class="lock-btn" onclick="lockSpin(${i},-1,${isLetter})">\u25BC</button>
+                <button class="lock-btn" onclick="lockSpin(${i},-1,${isLetter})">▼</button>
             </div>`;
         }).join('');
 
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
             ${renderFragments(data)}
-            ${p.collaborative!==false&&data.fragment?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team!</div>`:''}
+            ${p.collaborative!==false&&data.fragment?`<div class="collab-warning">🗣️ Sprich mit deinem Team!</div>`:''}
             <div class="lock-container">
                 <div class="lock-shackle" id="lockShackle"></div>
                 <div class="lock-body">${lockDigits}</div>
@@ -466,7 +466,7 @@
             <div class="team-progress-bar" id="teamProgressBar" style="display:none;"></div>
             <div class="answer-section" style="margin-top:12px;">
                 <div class="answer-buttons">
-                    <button class="btn-submit" onclick="submitLock(${digits},${isLetter})">Schloss oeffnen</button>
+                    <button class="btn-submit" onclick="submitLock(${digits},${isLetter})">Schloss öffnen</button>
                     <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
                 </div>
             </div>`;
@@ -480,21 +480,21 @@
             <div class="dpad-container">
                 <div class="dir-sequence" id="dirSequence"></div>
                 <div class="dpad">
-                    <div></div><div><button class="dpad-btn" onclick="addDir('up')">\u2B06\uFE0F</button></div><div></div>
-                    <div><button class="dpad-btn" onclick="addDir('left')">\u2B05\uFE0F</button></div>
+                    <div></div><div><button class="dpad-btn" onclick="addDir('up')">⬆️</button></div><div></div>
+                    <div><button class="dpad-btn" onclick="addDir('left')">⬅️</button></div>
                     <div class="dpad-center"></div>
-                    <div><button class="dpad-btn" onclick="addDir('right')">\u27A1\uFE0F</button></div>
-                    <div></div><div><button class="dpad-btn" onclick="addDir('down')">\u2B07\uFE0F</button></div><div></div>
+                    <div><button class="dpad-btn" onclick="addDir('right')">➡️</button></div>
+                    <div></div><div><button class="dpad-btn" onclick="addDir('down')">⬇️</button></div><div></div>
                 </div>
                 <div class="dir-actions">
-                    <button class="btn-sm" onclick="undoDir()">Zurueck</button>
-                    <button class="btn-sm" onclick="clearDirs()">Loeschen</button>
+                    <button class="btn-sm" onclick="undoDir()">Zurück</button>
+                    <button class="btn-sm" onclick="clearDirs()">Löschen</button>
                 </div>
             </div>
             <div class="lock-clue">${esc(p.clueText||'')}</div>
             <div class="answer-section" style="margin-top:8px;">
                 <div class="answer-buttons">
-                    <button class="btn-submit" onclick="submitDirections()">Pruefen</button>
+                    <button class="btn-submit" onclick="submitDirections()">Prüfen</button>
                     <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
                 </div>
             </div>`;
@@ -516,7 +516,7 @@
     }
 
     let dirSequence=[];
-    const dirEmojis={up:'\u2B06\uFE0F',down:'\u2B07\uFE0F',left:'\u2B05\uFE0F',right:'\u27A1\uFE0F'};
+    const dirEmojis={up:'⬆️',down:'⬇️',left:'⬅️',right:'➡️'};
     function addDir(d){dirSequence.push(d);renderDirSeq();}
     function undoDir(){dirSequence.pop();renderDirSeq();}
     function clearDirs(){dirSequence=[];renderDirSeq();}
@@ -534,7 +534,7 @@
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
             ${renderFragments(data)}
-            ${p.collaborative&&data.fragment?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team!</div>`:''}
+            ${p.collaborative&&data.fragment?`<div class="collab-warning">🗣️ Sprich mit deinem Team!</div>`:''}
             <div class="sort-list" id="sortList">
                 ${items.map((it,i)=>`
                     <div class="sort-item" data-id="${it.id}" data-idx="${i}">
@@ -542,8 +542,8 @@
                         <div class="sort-emoji">${it.emoji||''}</div>
                         <div class="sort-text">${esc(it.display)}</div>
                         <div class="sort-arrows">
-                            <button class="sort-arrow" onclick="moveItem(${i},-1)">\u25B2</button>
-                            <button class="sort-arrow" onclick="moveItem(${i},1)">\u25BC</button>
+                            <button class="sort-arrow" onclick="moveItem(${i},-1)">▲</button>
+                            <button class="sort-arrow" onclick="moveItem(${i},1)">▼</button>
                         </div>
                     </div>
                 `).join('')}
@@ -551,7 +551,7 @@
             <div class="team-progress-bar" id="teamProgressBar" style="display:none;"></div>
             <div class="answer-section">
                 <div class="answer-buttons">
-                    <button class="btn-submit" onclick="submitSorting()">Reihenfolge pruefen</button>
+                    <button class="btn-submit" onclick="submitSorting()">Reihenfolge prüfen</button>
                     <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
                 </div>
             </div>`;
@@ -634,7 +634,7 @@
         document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
         el.classList.add('selected');window._selectedChoice=val;
     }
-    function submitChoice(){if(!window._selectedChoice){showFeedback('Bitte waehle eine Antwort!',false);return;}sendAnswer(window._selectedChoice);}
+    function submitChoice(){if(!window._selectedChoice){showFeedback('Bitte wähle eine Antwort!',false);return;}sendAnswer(window._selectedChoice);}
 
     function renderSymbolOrder(data){
         const p=data.puzzle;
@@ -649,14 +649,14 @@
                         <div class="sort-emoji">${it.display||it.emoji||''}</div>
                         <div class="sort-text">${esc(it.label||'')}</div>
                         <div class="sort-arrows">
-                            <button class="sort-arrow" onclick="moveItem(${i},-1)">\u25B2</button>
-                            <button class="sort-arrow" onclick="moveItem(${i},1)">\u25BC</button>
+                            <button class="sort-arrow" onclick="moveItem(${i},-1)">▲</button>
+                            <button class="sort-arrow" onclick="moveItem(${i},1)">▼</button>
                         </div>
                     </div>`).join('')}
             </div>
             <div class="answer-section">
                 <div class="answer-buttons">
-                    <button class="btn-submit" onclick="submitSorting()">Reihenfolge pruefen</button>
+                    <button class="btn-submit" onclick="submitSorting()">Reihenfolge prüfen</button>
                     <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
                 </div>
             </div>`;
@@ -687,7 +687,7 @@
             <div class="hidden-grid" style="grid-template-columns:repeat(${w},1fr);">${cells}</div>
             <div class="found-counter" id="foundCounter">0 von ${window._hiddenTotal} Hinweisen gefunden</div>
             <div class="answer-section">
-                <input type="text" class="answer-input" id="answerInput" placeholder="LOESUNG" autocomplete="off" autocorrect="off" autocapitalize="characters">
+                <input type="text" class="answer-input" id="answerInput" placeholder="LÖSUNG" autocomplete="off" autocorrect="off" autocapitalize="characters">
                 <div class="answer-buttons">
                     <button class="btn-submit" onclick="submitText()">Absenden</button>
                     <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
@@ -716,9 +716,9 @@
         window._elimSelected=new Set();window._elimSequence=[];
 
         let badge='';
-        if(sub==='select_all')badge='<div class="elim-badge">Waehle ALLE richtigen Antworten</div>';
+        if(sub==='select_all')badge='<div class="elim-badge">Wähle ALLE richtigen Antworten</div>';
         else if(sub==='eliminate')badge='<div class="elim-badge">Streiche die FALSCHEN Aussagen durch</div>';
-        else if(sub==='sequence')badge='<div class="elim-badge">Waehle die Antworten in der richtigen Reihenfolge</div>';
+        else if(sub==='sequence')badge='<div class="elim-badge">Wähle die Antworten in der richtigen Reihenfolge</div>';
 
         const opts=(p.options||[]).map((o,i)=>{
             const clickFn=sub==='sequence'?`toggleSeq('${o.id}',this)`:`toggleElim('${o.id}',this,'${sub}')`;
@@ -731,14 +731,14 @@
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
             ${renderFragments(data)}
-            ${p.collaborative&&data.fragment?`<div class="collab-warning">\uD83D\uDDE3\uFE0F Sprich mit deinem Team!</div>`:''}
+            ${p.collaborative&&data.fragment?`<div class="collab-warning">🗣️ Sprich mit deinem Team!</div>`:''}
             ${badge}
             ${sub==='sequence'?'<div class="seq-display" id="seqDisplay"></div>':''}
             <div class="elim-options">${opts}</div>
             <div class="team-progress-bar" id="teamProgressBar" style="display:none;"></div>
             <div class="answer-section">
                 <div class="answer-buttons">
-                    <button class="btn-submit" onclick="submitElimination('${sub}')">Auswahl pruefen</button>
+                    <button class="btn-submit" onclick="submitElimination('${sub}')">Auswahl prüfen</button>
                     <button class="btn-hint" onclick="requestHint()" id="hintBtn">? ${maxHints}</button>
                 </div>
             </div>`;
@@ -751,8 +751,8 @@
             el.querySelector('.elim-check').textContent='';
         }else{
             window._elimSelected.add(id);
-            if(sub==='eliminate'){el.classList.add('eliminated');el.querySelector('.elim-check').textContent='\u2716';}
-            else{el.classList.add('selected');el.querySelector('.elim-check').textContent='\u2714';}
+            if(sub==='eliminate'){el.classList.add('eliminated');el.querySelector('.elim-check').textContent='✖';}
+            else{el.classList.add('selected');el.querySelector('.elim-check').textContent='✔';}
         }
     }
 
@@ -779,10 +779,10 @@
 
     function submitElimination(sub){
         if(sub==='sequence'){
-            if(window._elimSequence.length===0){showFeedback('Bitte waehle die Reihenfolge!',false);return;}
+            if(window._elimSequence.length===0){showFeedback('Bitte wähle die Reihenfolge!',false);return;}
             sendAnswer(window._elimSequence);
         }else{
-            if(window._elimSelected.size===0){showFeedback('Bitte waehle mindestens eine Option!',false);return;}
+            if(window._elimSelected.size===0){showFeedback('Bitte wähle mindestens eine Option!',false);return;}
             sendAnswer([...window._elimSelected]);
         }
     }
@@ -856,7 +856,7 @@
     function sendAnswer(answer){
         if(!hostConnection||!hostConnection.open){showFeedback('Keine Verbindung!',false);return;}
         hostConnection.send({type:'answer',answer:answer,puzzleType:currentPuzzle?currentPuzzle.type:''});
-        showFeedback('Wird geprueft...',null);
+        showFeedback('Wird geprüft...',null);
     }
 
     // ========== HINTS ==========
@@ -882,19 +882,19 @@
 
     function updateTeamProgress(data){
         const bar=document.getElementById('teamProgressBar');
-        if(bar){bar.style.display='block';bar.textContent=data.message||`${data.solvedCount}/${data.totalCount} haben geloest`;}
+        if(bar){bar.style.display='block';bar.textContent=data.message||`${data.solvedCount}/${data.totalCount} haben gelöst`;}
     }
 
     // ========== RESULTS ==========
     function displayResults(teams){
         const list=document.getElementById('resultsList');
         list.innerHTML=teams.map((t,i)=>{
-            const medal=i===0?'\uD83E\uDD47':i===1?'\uD83E\uDD48':i===2?'\uD83E\uDD49':(i+1)+'.';
+            const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
             return `<div class="result-card" style="border-color:${t.color};">
                 <div class="result-rank">${medal}</div>
                 <div class="result-info">
                     <div class="result-team-name" style="color:${t.color};">${t.name}</div>
-                    <div class="result-details">Raeume: ${t.rooms}/${t.totalRooms}${t.time?' | Zeit: '+t.time:' | Nicht fertig'}${t.hints>0?' | '+t.hints+' Hinweise':''}</div>
+                    <div class="result-details">Räume: ${t.rooms}/${t.totalRooms}${t.time?' | Zeit: '+t.time:' | Nicht fertig'}${t.hints>0?' | '+t.hints+' Hinweise':''}</div>
                 </div>
             </div>`;
         }).join('');
