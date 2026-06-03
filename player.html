@@ -251,9 +251,11 @@
     // ========== STATE ==========
     let peer=null,hostConnection=null,playerName='',myTeam=null,maxHints=3,hintsUsedThisRoom=0,isReconnecting=false;
     let currentPuzzle=null,currentRoomData=null,dragEngine=null;
+    let previewMode=false,previewRooms=[],previewIndex=0,previewAnswerKey=null,previewHintsUsed=0;
     const urlParams=new URLSearchParams(window.location.search);
+    const isPreview=urlParams.get('preview')==='1';
     const hostId=urlParams.get('host');
-    if(!hostId)alert('Kein Host gefunden! Bitte QR-Code erneut scannen.');
+    if(!isPreview&&!hostId)alert('Kein Host gefunden! Bitte QR-Code erneut scannen.');
 
     // ========== AUDIO ==========
     const AudioCtx=window.AudioContext||window.webkitAudioContext;
@@ -854,6 +856,7 @@
     }
 
     function sendAnswer(answer){
+        if(previewMode){checkAnswerLocal(answer);return;}
         if(!hostConnection||!hostConnection.open){showFeedback('Keine Verbindung!',false);return;}
         hostConnection.send({type:'answer',answer:answer,puzzleType:currentPuzzle?currentPuzzle.type:''});
         showFeedback('Wird geprüft...',null);
@@ -861,6 +864,7 @@
 
     // ========== HINTS ==========
     function requestHint(){
+        if(previewMode){previewHint();return;}
         if(!hostConnection||!hostConnection.open)return;
         hostConnection.send({type:'requestHint'});hintsUsedThisRoom++;
         const btn=document.getElementById('hintBtn');
@@ -905,12 +909,67 @@
     function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
     // ========== INIT ==========
+    // ========== VORSCHAU-MODUS (Solo-Test fuer Lehrpersonen) ==========
+    function startPreview(){
+        previewMode=true;
+        try{previewRooms=JSON.parse(localStorage.getItem('escapePreviewRooms')||'[]');}catch(e){previewRooms=[];}
+        maxHints=parseInt(localStorage.getItem('escapePreviewHints')||'999');
+        if(!previewRooms.length){alert('Keine Räume für die Vorschau gefunden. Bitte im Editor auf „Vorschau" klicken.');return;}
+        myTeam='blue';previewIndex=0;
+        updateStatus('Vorschau-Modus',true);
+        showScreen('gameScreen');
+        showPreviewRoom();
+    }
+    function showPreviewRoom(){
+        if(previewIndex>=previewRooms.length){
+            document.getElementById('victoryTime').textContent='Vorschau abgeschlossen';
+            showScreen('victoryScreen');playSound('victory');vibrate([200,100,200]);showConfetti();return;
+        }
+        const room=previewRooms[previewIndex];
+        previewAnswerKey=room.puzzle;
+        const pd=JSON.parse(JSON.stringify(room.puzzle));
+        delete pd.solution;delete pd.correctOrder;
+        if(pd.options)pd.options.forEach(o=>{delete o.correct;delete o.order;});
+        let fragments=null;
+        if(pd.collaborative&&pd.fragments&&pd.fragments.length){fragments=pd.fragments;}
+        delete pd.fragments;
+        hintsUsedThisRoom=0;previewHintsUsed=0;
+        const data={roomNumber:previewIndex+1,totalRooms:previewRooms.length,roomEmoji:room.roomEmoji||'🚪',title:room.title,storyIntro:room.storyIntro||'',teamName:'👁️ Vorschau',puzzle:pd,fragments:fragments};
+        currentRoomData=data;currentPuzzle=pd;
+        renderRoom(data);playSound('newroom');
+    }
+    function checkAnswerLocal(answer){
+        const puzzle=previewAnswerKey;let ok=false;
+        switch(puzzle.solutionType){
+            case 'text':case 'lock':ok=String(answer).trim().toUpperCase()===String(puzzle.solution).trim().toUpperCase();break;
+            case 'order':ok=JSON.stringify(answer)===JSON.stringify(puzzle.correctOrder);break;
+            case 'multi_select':
+                if(puzzle.subtype==='eliminate'){const fa=new Set((puzzle.options||[]).filter(o=>!o.correct).map(o=>o.id));const s=new Set(answer);ok=s.size===fa.size&&[...s].every(id=>fa.has(id));}
+                else{const co=new Set((puzzle.options||[]).filter(o=>o.correct).map(o=>o.id));const s=new Set(answer);ok=s.size===co.size&&[...s].every(id=>co.has(id));}break;
+            case 'ordered_select':{const cs=[...(puzzle.options||[])].sort((a,b)=>(a.order||0)-(b.order||0)).map(o=>o.id);ok=JSON.stringify(answer)===JSON.stringify(cs);}break;
+            case 'choice':ok=String(answer)===String(puzzle.solution);break;
+            case 'directions':ok=JSON.stringify(answer)===JSON.stringify(puzzle.solution);break;
+        }
+        if(ok){showFeedback(previewRooms[previewIndex].storySuccess||'Richtig!',true);playSound('correct');vibrate([100,50,100]);disableInput();previewIndex++;setTimeout(showPreviewRoom,1600);}
+        else{showFeedback('Falsch! Nochmal versuchen...',false);playSound('wrong');vibrate(150);}
+    }
+    function previewHint(){
+        const hints=(previewAnswerKey&&previewAnswerKey.hints)||[];
+        if(!hints.length){displayHint('Kein Hinweis verfügbar.');return;}
+        if(maxHints!==999&&previewHintsUsed>=maxHints){displayHint('Keine Hinweise mehr!');return;}
+        const hi=Math.min(previewHintsUsed,hints.length-1);previewHintsUsed++;
+        displayHint(hints[hi]);
+        const btn=document.getElementById('hintBtn');
+        if(btn){const r=maxHints===999?'?':Math.max(0,maxHints-previewHintsUsed);btn.textContent='? '+r;if(maxHints!==999&&previewHintsUsed>=maxHints)btn.disabled=true;}
+    }
+
     document.addEventListener('DOMContentLoaded',()=>{
         document.addEventListener('keypress',e=>{if(e.key==='Enter'){
             const ai=document.getElementById('answerInput');
             if(ai&&document.activeElement===ai)submitText();
             else if(document.activeElement===document.getElementById('playerName'))joinGame();
         }});
+        if(isPreview){startPreview();return;}
         const saved=localStorage.getItem('escapeRoomName');
         if(saved)document.getElementById('playerName').value=saved;
         document.getElementById('playerName').focus();

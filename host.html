@@ -163,7 +163,7 @@
                     <div class="qr-container"><h2>Spieler beitreten</h2><div id="qrcode"></div><div class="join-url" id="joinUrl" onclick="copyUrl()">URL wird generiert...</div><div class="copy-hint">Klicken zum Kopieren</div></div>
                     <div class="players-container"><h2>Verbundene Spieler (<span id="playerCountLobby">0</span>)</h2><div class="player-list" id="playerList"><p style="text-align:center;opacity:0.5;">Warten auf Spieler...</p></div></div>
                 </div>
-                <div class="game-controls"><button class="btn-start" onclick="startGame()" id="startBtn" disabled>Spiel Starten</button></div>
+                <div class="game-controls"><button class="btn-start" onclick="startGame()" id="startBtn" disabled>Spiel Starten</button><button class="btn-secondary" onclick="previewGame()" style="margin-left:10px">👁️ Vorschau (Solo-Test)</button></div>
             </div>
             <div class="tab-content" id="tab-editor">
                 <div class="editor-container">
@@ -371,6 +371,13 @@
     function updatePlayerCount(){const c=players.length;document.getElementById('playerCount').textContent=c;document.getElementById('playerCountLobby').textContent=c;document.getElementById('startBtn').disabled=c<parseInt(document.getElementById('minPlayers').value);}
     function copyUrl(){navigator.clipboard.writeText(document.getElementById('joinUrl').textContent).then(()=>{document.querySelector('.copy-hint').textContent='Kopiert!';setTimeout(()=>document.querySelector('.copy-hint').textContent='Klicken zum Kopieren',2000);});}
 
+    function previewGame(){
+        const inv=rooms.find(r=>!r.puzzle||((r.puzzle.solutionType==='text'||r.puzzle.solutionType==='lock')&&!r.puzzle.solution));
+        if(inv){alert('Mindestens ein Rätsel hat noch keine Lösung. Bitte zuerst vervollständigen.');return;}
+        localStorage.setItem('escapePreviewRooms',JSON.stringify(rooms));
+        localStorage.setItem('escapePreviewHints',document.getElementById('maxHints').value);
+        window.open('player.html?preview=1','_blank');
+    }
     function startGame(){
         const min=parseInt(document.getElementById('minPlayers').value);if(players.length<min){alert('Mindestens '+min+' Spieler!');return;}
         const inv=rooms.find(r=>!r.puzzle||(r.puzzle.solutionType==='text'&&!r.puzzle.solution)||(r.puzzle.solutionType==='lock'&&!r.puzzle.solution));
