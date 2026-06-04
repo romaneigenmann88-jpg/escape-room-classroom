@@ -195,6 +195,7 @@
         <div id="gameView" class="hidden">
             <div class="timer" id="timer">00:00</div>
             <div class="leaderboard">Führend: <span class="leading-team" id="leadingTeam">-</span></div>
+            <div id="playerAdmin"></div>
             <div class="teams-container" id="teamsContainer"></div>
             <div class="game-controls"><button class="btn-stop" onclick="stopGame()">Spiel Beenden</button></div>
         </div>
@@ -398,10 +399,46 @@
         peer.on('error',e=>console.error('Peer:',e));}
 
     function handlePlayerMessage(pid,data){switch(data.type){case 'join':addPlayer(pid,data.name);break;case 'answer':checkAnswer(pid,data);break;case 'requestHint':sendHint(pid);break;case 'reconnect':handleReconnect(pid,data.name);break;}}
-    function addPlayer(id,name){if(players.find(p=>p.id===id))return;players.push({id,name:name||'Spieler '+(players.length+1),team:null,completedCurrentRoom:false,hintsUsed:0});updatePlayersList();updatePlayerCount();const c=connections.get(id);if(c)c.send({type:'welcome',message:'Verbunden!'});}
-    function handleReconnect(id,name){const ex=players.find(p=>p.name===name);if(ex&&gameStarted){ex.id=id;const t=teams[ex.team];const c=connections.get(id);if(c&&t){c.send({type:'start',team:ex.team,teamColor:t.color,teamName:t.emoji+' '+t.name,maxHints:parseInt(document.getElementById('maxHints').value)});sendRoomToPlayer(id,ex.team,t.currentRoom);}}else addPlayer(id,name);}
+    function addPlayer(id,name){
+        name=(name||'').trim()||('Spieler '+(players.length+1));
+        const mh=()=>parseInt(document.getElementById('maxHints').value);
+        const existing=players.find(p=>p.name.toLowerCase()===name.toLowerCase());
+        if(existing){
+            if(existing.id!==id){connections.delete(existing.id);existing.id=id;}
+            const c=connections.get(id);
+            if(gameStarted&&existing.team&&teams[existing.team]){const tm=teams[existing.team];if(c){c.send({type:'start',team:existing.team,teamColor:tm.color,teamName:tm.emoji+' '+tm.name,maxHints:mh()});if(tm.currentRoom<rooms.length)sendRoomToPlayer(id,existing.team,tm.currentRoom);}}
+            else if(c)c.send({type:'welcome',message:gameStarted?'Warte auf Zuteilung durch den Host...':'Verbunden!'});
+            updatePlayersList();updatePlayerCount();if(gameStarted)updateTeamsDisplay();return;
+        }
+        players.push({id,name,team:null,completedCurrentRoom:false,hintsUsed:0});
+        const c=connections.get(id);if(c)c.send({type:'welcome',message:gameStarted?'Warte auf Zuteilung durch den Host...':'Verbunden!'});
+        updatePlayersList();updatePlayerCount();if(gameStarted)updateTeamsDisplay();
+    }
+    function handleReconnect(id,name){addPlayer(id,name);}
     function removePlayer(id){if(!gameStarted)players=players.filter(p=>p.id!==id);connections.delete(id);updatePlayersList();updatePlayerCount();if(gameStarted)updateTeamsDisplay();}
     function updatePlayersList(){const l=document.getElementById('playerList');l.innerHTML=players.length?players.map(p=>`<div class="player-item"><span>${esc(p.name)}</span></div>`).join(''):'<p style="text-align:center;opacity:0.5;">Warten auf Spieler...</p>';}
+    function assignPlayer(playerId,teamKey){
+        const p=players.find(x=>x.id===playerId);if(!p)return;
+        if(p.team&&teams[p.team])teams[p.team].players=teams[p.team].players.filter(x=>x.id!==playerId);
+        p.team=teamKey||null;p.completedCurrentRoom=false;
+        if(teamKey&&teams[teamKey]){const tm=teams[teamKey];if(!tm.players.find(x=>x.id===playerId))tm.players.push(p);
+            const c=connections.get(playerId);if(c){c.send({type:'start',team:teamKey,teamColor:tm.color,teamName:tm.emoji+' '+tm.name,maxHints:parseInt(document.getElementById('maxHints').value)});if(tm.currentRoom<rooms.length)sendRoomToPlayer(playerId,teamKey,tm.currentRoom);}}
+        updateTeamsDisplay();
+    }
+    function skipRoom(teamKey){
+        const team=teams[teamKey];if(!team||team.currentRoom>=rooms.length)return;
+        if(!confirm('Diesen Raum für „'+team.name+'" als gelöst markieren und weiterschalten?'))return;
+        team.completedRooms++;team.currentRoom++;team.players.forEach(p=>p.completedCurrentRoom=false);
+        if(team.currentRoom>=rooms.length){teamFinished(teamKey);}
+        else{team.players.forEach(p=>{const c=connections.get(p.id);if(c){c.send({type:'feedback',correct:true,message:'Der Host hat euch weitergeschaltet!'});setTimeout(()=>sendRoomToPlayer(p.id,teamKey,team.currentRoom),600);}});}
+        updateTeamsDisplay();updateLeaderboard();
+    }
+    function updatePlayerAdmin(){
+        const box=document.getElementById('playerAdmin');if(!box)return;
+        if(!players.length){box.innerHTML='';return;}
+        const opts=Object.entries(teams).map(([k,tm])=>`<option value="${k}">${tm.emoji} ${tm.name}</option>`).join('');
+        box.innerHTML=`<div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:10px 14px;margin-bottom:14px"><div style="font-weight:600;margin-bottom:8px">Spieler-Verwaltung <span style="font-size:0.8em;color:#aaa">(Team zuteilen / wechseln · Nachzügler einsortieren)</span></div>${players.map(p=>{const online=connections.has(p.id);return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:0.9em"><span style="width:9px;height:9px;border-radius:50%;background:${online?'#4ade80':'#ef4444'};display:inline-block" title="${online?'online':'offline'}"></span><span style="flex:1">${esc(p.name)}${p.team?'':' <em style=\'color:#f59e0b\'>(ohne Team)</em>'}</span><select onchange="assignPlayer('${p.id}',this.value)" style="padding:5px 8px;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)"><option value="">– kein Team –</option>${Object.entries(teams).map(([k,tm])=>`<option value="${k}" ${p.team===k?'selected':''}>${tm.emoji} ${tm.name}</option>`).join('')}</select></div>`;}).join('')}</div>`;
+    }
     function updatePlayerCount(){const c=players.length;document.getElementById('playerCount').textContent=c;document.getElementById('playerCountLobby').textContent=c;document.getElementById('startBtn').disabled=c<parseInt(document.getElementById('minPlayers').value);}
     function copyUrl(){navigator.clipboard.writeText(document.getElementById('joinUrl').textContent).then(()=>{document.querySelector('.copy-hint').textContent='Kopiert!';setTimeout(()=>document.querySelector('.copy-hint').textContent='Klicken zum Kopieren',2000);});}
 
@@ -458,9 +495,10 @@
         }
         if(isCorrect){if(c)c.send({type:'feedback',correct:true,message:'Richtig! Warte auf dein Team...'});
             if(!player.completedCurrentRoom){player.completedCurrentRoom=true;
-                const solved=team.players.filter(p=>p.completedCurrentRoom).length;
-                team.players.forEach(tp=>{const tc=connections.get(tp.id);if(tc)tc.send({type:'teamProgress',solvedCount:solved,totalCount:team.players.length,message:solved+' von '+team.players.length+' haben gelöst'});});
-                if(team.players.every(p=>p.completedCurrentRoom)){team.completedRooms++;team.currentRoom++;team.players.forEach(p=>p.completedCurrentRoom=false);
+                const active=team.players.filter(p=>connections.has(p.id));
+                const solved=active.filter(p=>p.completedCurrentRoom).length;
+                team.players.forEach(tp=>{const tc=connections.get(tp.id);if(tc)tc.send({type:'teamProgress',solvedCount:solved,totalCount:active.length,message:solved+' von '+active.length+' haben gelöst'});});
+                if(active.length&&active.every(p=>p.completedCurrentRoom)){team.completedRooms++;team.currentRoom++;team.players.forEach(p=>p.completedCurrentRoom=false);
                     if(team.currentRoom>=rooms.length){teamFinished(player.team);}
                     else{const sr=rooms[team.currentRoom-1];team.players.forEach(p=>{const tc=connections.get(p.id);if(tc)tc.send({type:'feedback',correct:true,message:sr.storySuccess||'Weiter!'});setTimeout(()=>sendRoomToPlayer(p.id,player.team,team.currentRoom),2000);});
                     }updateTeamsDisplay();updateLeaderboard();}else{updateTeamsDisplay();}}}
@@ -485,7 +523,7 @@
         document.getElementById('gameView').classList.add('hidden');document.getElementById('resultsView').classList.remove('hidden');}
 
     function updateTeamsDisplay(){document.getElementById('teamsContainer').innerHTML=Object.entries(teams).map(([k,t])=>{const prog=rooms.length>0?(t.completedRooms/rooms.length)*100:0;const cr=t.currentRoom<rooms.length?rooms[t.currentRoom]:{title:'Fertig',roomEmoji:'🏆'};
-        return `<div class="team-card team-${k}" ${t.finishTime?'style="opacity:0.7"':''}><div class="team-header"><div class="team-name">${t.emoji} ${t.name}</div><div class="room-progress-label">${t.completedRooms}/${rooms.length}</div></div><div class="progress-bar"><div class="progress-fill" style="width:${prog}%">${Math.round(prog)}%</div></div><div class="team-room-info">${cr.roomEmoji||''} ${cr.title||''}</div>${t.finishTime?`<div style="text-align:center;color:#4ade80;font-weight:bold;margin:6px 0">Fertig! ${formatTime(t.finishTime)}</div>`:''}<div class="team-members">${t.players.map(p=>`<div class="team-member"><span>${esc(p.name)} ${p.completedCurrentRoom?'✅':'⏳'}</span>${p.hintsUsed>0?`<span class="hints-used">${p.hintsUsed}H</span>`:''}</div>`).join('')}</div></div>`;}).join('');}
+        return `<div class="team-card team-${k}" ${t.finishTime?'style="opacity:0.7"':''}><div class="team-header"><div class="team-name">${t.emoji} ${t.name}</div><div class="room-progress-label">${t.completedRooms}/${rooms.length}</div></div><div class="progress-bar"><div class="progress-fill" style="width:${prog}%">${Math.round(prog)}%</div></div><div class="team-room-info">${cr.roomEmoji||''} ${cr.title||''}</div>${t.finishTime?`<div style="text-align:center;color:#4ade80;font-weight:bold;margin:6px 0">Fertig! ${formatTime(t.finishTime)}</div>`:`<button class="btn-sm btn-secondary" style="width:100%;margin:6px 0" onclick="skipRoom('${k}')">▶ Raum überspringen</button>`}<div class="team-members">${t.players.map(p=>`<div class="team-member"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${connections.has(p.id)?'#4ade80':'#ef4444'};margin-right:5px"></span>${esc(p.name)} ${p.completedCurrentRoom?'✅':'⏳'}</span>${p.hintsUsed>0?`<span class="hints-used">${p.hintsUsed}H</span>`:''}</div>`).join('')}</div></div>`;}).join('');updatePlayerAdmin();}
     function updateLeaderboard(){const s=Object.entries(teams).sort(([,a],[,b])=>b.completedRooms-a.completedRooms);if(s.length){const l=s[0][1];document.getElementById('leadingTeam').textContent=l.emoji+' '+l.name;document.getElementById('leadingTeam').style.color=l.color;}}
     function startTimer(){timerInterval=setInterval(()=>{document.getElementById('timer').textContent=formatTime(Math.floor((Date.now()-startTime)/1000));},1000);}
     function formatTime(s){return Math.floor(s/60).toString().padStart(2,'0')+':'+((s%60).toString().padStart(2,'0'));}
