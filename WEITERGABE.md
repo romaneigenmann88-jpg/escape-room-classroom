@@ -73,26 +73,25 @@ const PEER_CONFIG = { host:'wwm-peer-broker.onrender.com', port:443, path:'/', s
 ## Schritt 3: Eigenes Metered.ca-Konto (TURN)
 1. Kostenlos registrieren: https://www.metered.ca/ → **Sign up** → TURN-Service anlegen.
 2. Im Dashboard die **statischen TURN-Zugangsdaten** holen: `username` + `credential`.
-3. In **`host.html`** UND **`player.html`** die TURN-Zugangsdaten ersetzen. Sie stehen
-   hier direkt im `new Peer(...)`-Aufruf (im `iceServers`-Block) und kommen **mehrfach**
-   vor. Am einfachsten per Suchen-und-Ersetzen **alle Vorkommen** dieser beiden Werte
-   austauschen:
+3. In **`host.html`** UND **`player.html`** nach **`METERED_CONFIG`** suchen (Strg+F):
 
-   | Suchen (alter Wert) | Ersetzen durch |
-   |---------------------|----------------|
-   | `c4ca643ec3ef89475fda8aaf` | dein `username` aus Metered |
-   | `958T4scRQJRKgSyg` | dein `credential` aus Metered |
+```js
+const METERED_CONFIG = {
+    username:   'c4ca643ec3ef89475fda8aaf',   // ← dein TURN-Benutzer aus Metered
+    credential: '958T4scRQJRKgSyg'            // ← dein TURN-Passwort aus Metered
+};
+```
 
-   Tipp: Den Code-Editor auf dem PC (z. B. VS Code) nutzen und „Alle ersetzen" –
-   dann sicher kein Vorkommen vergessen. Danach Dateien committen/hochladen.
+   Die **2 Werte** durch die eigenen ersetzen – **in beiden Dateien gleich**.
+   (Der Rest des Codes zieht sich die Werte automatisch von hier.)
 
 ## ✅ Werte-Checkliste fuer Weg B
 
 | Wert | Woher | Wohin (host.html **und** player.html) |
 |------|-------|----------------------------------------|
 | Broker-URL | Render (Schritt 2) | `PEER_CONFIG.host` |
-| TURN-Benutzer | Metered-Dashboard | alle Vorkommen von `c4ca643ec3ef89475fda8aaf` |
-| TURN-Passwort | Metered-Dashboard | alle Vorkommen von `958T4scRQJRKgSyg` |
+| TURN-Benutzer | Metered-Dashboard | `METERED_CONFIG.username` |
+| TURN-Passwort | Metered-Dashboard | `METERED_CONFIG.credential` |
 
 Einmalig einstellen: GitHub **Pages** auf `master` / `/ (root)`, Render-Plan **Free**.
 
