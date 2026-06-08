@@ -1,0 +1,545 @@
+[
+  {
+    "id": "s1",
+    "title": "Der Wettlauf der Millionen",
+    "roomEmoji": "🏊",
+    "storyIntro": "Willkommen im Körper von Alexandra. Damit ein Kind entstehen kann, beginnt ein dramatischer Wettlauf. Jeder von euch erinnert sich an andere Fakten aus dem Film – nur zusammen füllt ihr alle Lücken!",
+    "storySuccess": "Der Weg ist frei – ein einziges Spermium hat es geschafft!",
+    "puzzle": {
+      "type": "cloze",
+      "solutionType": "cloze",
+      "collaborative": true,
+      "description": "Füllt den Lückentext über die Befruchtung. Redet miteinander – niemand kennt alle Zahlen allein!",
+      "text": "Bei einem Samenerguss gelangen über {250} Millionen Spermien in die Scheide. Doch nur ein {einziges} Spermium befruchtet am Ende die Eizelle. Viele scheitern schon im sauren Milieu der {Scheide}. Den Eingang zur Gebärmutter versperrt meist ein zäher {Schleimpfropfen}. Wer es bis in die Gebärmutter schafft, kann dort {vier} bis fünf Tage überleben und auf den Eisprung warten.",
+      "fragments": [
+        {
+          "label": "Erinnerung A",
+          "text": "Du weisst aus dem Film: Bei einem Samenerguss gelangen über 250 Millionen Spermien in die Scheide – aber nur ein einziges erreicht später sein Ziel."
+        },
+        {
+          "label": "Erinnerung B",
+          "text": "Du weisst aus dem Film: Viele Spermien scheitern bereits im sauren Milieu der Scheide. Der Eingang zur Gebärmutter ist durch einen zähen Schleimpfropfen versperrt."
+        },
+        {
+          "label": "Erinnerung C",
+          "text": "Du weisst aus dem Film: In der Gebärmutter angekommen, können die Spermien dort vier bis fünf Tage überleben."
+        }
+      ],
+      "hints": [
+        "Sprecht zuerst über eure Fragmente – jeder kennt andere Fakten.",
+        "Zu Beginn ist von einer riesigen Zahl in Millionen die Rede.",
+        "Wie viele Spermien erreichen am Ende wirklich das Ei?"
+      ]
+    }
+  },
+  {
+    "id": "s2",
+    "title": "Die Begriffe der Entstehung",
+    "roomEmoji": "🔗",
+    "storyIntro": "An der Laborwand hängen Fachbegriffe und ihre Bedeutungen wild durcheinander. Jedes Teammitglied kennt nur einen Teil sicher – ordnet gemeinsam zu!",
+    "storySuccess": "Alles korrekt zugeordnet – die Fachsprache sitzt!",
+    "puzzle": {
+      "type": "matching",
+      "solutionType": "matching",
+      "collaborative": true,
+      "description": "Ordnet jedem Fachbegriff die richtige Bedeutung zu. Achtung: Einige Begriffe sind leicht zu verwechseln!",
+      "pairs": [
+        {
+          "id": "p1",
+          "left": "Zygote",
+          "right": "die befruchtete Eizelle – Ausgangszelle für neues Leben"
+        },
+        {
+          "id": "p2",
+          "left": "Maulbeerenstadium",
+          "right": "32-zelliger Keim, dessen Zellen noch alle identisch sind"
+        },
+        {
+          "id": "p3",
+          "left": "Dottersack",
+          "right": "das erste Ernährungsorgan des frühen Embryos"
+        },
+        {
+          "id": "p4",
+          "left": "Plazenta",
+          "right": "der Mutterkuchen – versorgt das Kind über den Blutkreislauf"
+        },
+        {
+          "id": "p5",
+          "left": "Nabelschnur",
+          "right": "verbindet das Kind mit der Plazenta"
+        },
+        {
+          "id": "p6",
+          "left": "Embryo",
+          "right": "Bezeichnung bis zum Ende des zweiten Monats"
+        },
+        {
+          "id": "p7",
+          "left": "Fötus",
+          "right": "Bezeichnung ab etwa 4 cm Grösse / Ende des zweiten Monats"
+        },
+        {
+          "id": "p8",
+          "left": "Käseschmiere",
+          "right": "schützt die empfindliche Haut des Kindes vor der Geburt"
+        }
+      ],
+      "fragments": [
+        {
+          "label": "Fachwissen A",
+          "text": "Du bist sicher: Die Zygote ist der allererste Zustand (befruchtete Eizelle). Das Maulbeerenstadium besteht aus 32 noch identischen Zellen."
+        },
+        {
+          "label": "Fachwissen B",
+          "text": "Du bist sicher: Der Dottersack ernährt früh, die Plazenta (Mutterkuchen) später über das Blut. Die Nabelschnur ist die Verbindung dazwischen."
+        },
+        {
+          "label": "Fachwissen C",
+          "text": "Du bist sicher: 'Embryo' sagt man bis Ende des 2. Monats, danach 'Fötus'. Die Käseschmiere ist die schützende Schicht auf der Haut des Babys."
+        }
+      ],
+      "hints": [
+        "Embryo und Fötus unterscheiden sich nur durch den Zeitpunkt – wer hat das passende Fragment?",
+        "Dottersack und Plazenta sind beides Ernährungsorgane, aber zu verschiedenen Zeiten.",
+        "Die Zygote steht ganz am Anfang, das Maulbeerenstadium etwas später."
+      ]
+    }
+  },
+  {
+    "id": "s3",
+    "title": "Embryo oder Fötus?",
+    "roomEmoji": "❓",
+    "storyIntro": "Ein Bildschirm stellt eine knifflige Frage zum Zeitpunkt einer wichtigen Namensänderung. Alle Antworten klingen plausibel – diskutiert!",
+    "storySuccess": "Richtig erkannt – der Unterschied liegt im Zeitpunkt!",
+    "puzzle": {
+      "type": "quiz",
+      "solutionType": "single_select",
+      "collaborative": true,
+      "description": "Ab wann spricht man nicht mehr von einem Embryo, sondern von einem Fötus? Nur EINE Antwort ist richtig.",
+      "options": [
+        {
+          "id": "q1",
+          "display": "Ab dem Ende des zweiten Monats, wenn er etwa 4 cm gross ist und einem winzigen Menschen ähnelt",
+          "correct": true
+        },
+        {
+          "id": "q2",
+          "display": "Sobald in der dritten Woche das Herz zu schlagen beginnt",
+          "correct": false
+        },
+        {
+          "id": "q3",
+          "display": "Ab dem Tag der Einnistung in die Gebärmutterschleimhaut",
+          "correct": false
+        },
+        {
+          "id": "q4",
+          "display": "Erst ab der 22. Woche, wenn die Mutter die ersten Bewegungen spürt",
+          "correct": false
+        }
+      ],
+      "fragments": [
+        {
+          "label": "Spur A",
+          "text": "Du erinnerst dich: In der 3. Woche schlägt das Herz, in der 4. ist der Embryo so gross wie eine Linse. Das ist aber noch nicht der Wechsel zum Fötus."
+        },
+        {
+          "label": "Spur B",
+          "text": "Du erinnerst dich: Innerhalb der ersten 8 Wochen werden alle Organe angelegt. Am Ende des 2. Monats ist er ein paar Zentimeter gross."
+        },
+        {
+          "label": "Spur C",
+          "text": "Du erinnerst dich: Bewegungen spürt die Mutter erst ab der 22. Woche – das ist viel später als die Namensänderung."
+        }
+      ],
+      "hints": [
+        "Achtet genau auf den Zeitpunkt, nicht nur auf das Ereignis.",
+        "Der Begriff wechselt, sobald aus dem Embryo erstmals ein winziger Mensch erkennbar wird.",
+        "Herzschlag und spürbare Bewegungen passieren zu ganz anderen Zeiten."
+      ]
+    }
+  },
+  {
+    "id": "s4",
+    "title": "Das Zeitschloss",
+    "roomEmoji": "🔒",
+    "storyIntro": "Ein Zahlenschloss versperrt den Eileiter. Jedes Teammitglied kennt nur ein Bruchstück über die Lebensdauer der Spermien. Rechnet gemeinsam!",
+    "storySuccess": "Klick! Das Zeitschloss öffnet sich.",
+    "puzzle": {
+      "type": "lock",
+      "subtype": "number_lock",
+      "solutionType": "lock",
+      "collaborative": true,
+      "description": "Stellt die maximale Überlebensdauer eines Spermiums in STUNDEN ein. Niemand kennt allein alle Angaben!",
+      "digits": 3,
+      "solution": "120",
+      "clueText": "Drei Stellen. Wie viele Stunden überlebt ein Spermium höchstens?",
+      "fragments": [
+        {
+          "label": "Plan A",
+          "text": "Du weisst: Spermien können in der Gebärmutter mehrere Tage auf den Eisprung warten."
+        },
+        {
+          "label": "Plan B",
+          "text": "Du weisst: Die maximale Überlebensdauer beträgt genau fünf Tage."
+        },
+        {
+          "label": "Plan C",
+          "text": "Du weisst: Gefragt ist die Zeit in Stunden. Denk daran: 1 Tag = 24 Stunden."
+        }
+      ],
+      "hints": [
+        "Tauscht eure Pläne aus – erst dann habt ihr Tage UND die Umrechnung.",
+        "Ihr müsst von Tagen in Stunden umrechnen.",
+        "Drei Stellen heisst: hier wird multipliziert, nicht addiert."
+      ]
+    }
+  },
+  {
+    "id": "s5",
+    "title": "Die Reise durch den Eileiter",
+    "roomEmoji": "🔍",
+    "storyIntro": "Die befruchtete Eizelle teilt sich auf ihrem Weg immer weiter. Durchsucht den Eileiter gemeinsam, findet die Zeitangaben der Zellteilung – aber Vorsicht vor falschen Fährten!",
+    "storySuccess": "Ihr habt die richtigen Stadien gefunden – weiter zur Gebärmutter!",
+    "puzzle": {
+      "type": "hidden",
+      "solutionType": "text",
+      "description": "Durchsucht den Raum. Findet die nötigen Stundenzahlen der Zellteilung und löst die versteckte Aufgabe (Antwort als Zahl).",
+      "scene": {
+        "width": 6,
+        "height": 4,
+        "objects": [
+          {
+            "emoji": "🥚",
+            "x": 0,
+            "y": 0,
+            "clickable": true,
+            "reveals": "2-Zell-Stadium: etwa 30 Stunden nach der Befruchtung."
+          },
+          {
+            "emoji": "🔬",
+            "x": 2,
+            "y": 1,
+            "clickable": true,
+            "reveals": "4-Zell-Stadium: nach 40 bis 50 Stunden."
+          },
+          {
+            "emoji": "🧬",
+            "x": 5,
+            "y": 0,
+            "clickable": true,
+            "reveals": "8-Zell-Stadium: nach etwa 55 Stunden."
+          },
+          {
+            "emoji": "🫐",
+            "x": 1,
+            "y": 2,
+            "clickable": true,
+            "reveals": "Maulbeerenstadium: am 4. Tag, ein 32-zelliger Keim."
+          },
+          {
+            "emoji": "📋",
+            "x": 4,
+            "y": 3,
+            "clickable": true,
+            "reveals": "AUFGABE: Addiere die Stundenzahl des 2-Zell-Stadiums und die des 8-Zell-Stadiums."
+          },
+          {
+            "emoji": "🌡️",
+            "x": 3,
+            "y": 0,
+            "clickable": true,
+            "reveals": "Nur ein Thermometer – keine brauchbare Zahl."
+          },
+          {
+            "emoji": "🪺",
+            "x": 0,
+            "y": 3,
+            "clickable": true,
+            "reveals": "Ein leeres Nest – hier ist nichts."
+          },
+          {
+            "emoji": "🕯️",
+            "x": 5,
+            "y": 2,
+            "clickable": false
+          }
+        ]
+      },
+      "solution": "85",
+      "hints": [
+        "Ihr braucht genau zwei der gefundenen Stundenzahlen – die Aufgabe sagt welche.",
+        "Welches Stadium kommt als erstes, welches als drittes?",
+        "Die Aufgabe verlangt Addieren, nicht Multiplizieren."
+      ]
+    }
+  },
+  {
+    "id": "s6",
+    "title": "Wie gross ist das Kind?",
+    "roomEmoji": "📏",
+    "storyIntro": "Der Fötus wächst. Zwei wichtige Grössenangaben sind auf das Team verteilt. Berechnet gemeinsam das Wachstum – die richtige Einheit entscheidet!",
+    "storySuccess": "Genau gerechnet – das Wachstum stimmt!",
+    "puzzle": {
+      "type": "image",
+      "subtype": "emoji_equation",
+      "solutionType": "text",
+      "collaborative": true,
+      "description": "Wie viele Millimeter ist das Ungeborene zwischen den beiden Zeitpunkten gewachsen? Nutzt beide Grössen, die euer Team kennt.",
+      "equations": [
+        {
+          "display": "🍼 Wie stark ist das Ungeborene gewachsen?",
+          "info": true
+        },
+        {
+          "display": "Nutzt die beiden Grössen, die nur euer Team gemeinsam kennt.",
+          "info": true
+        },
+        {
+          "display": "Hinweis: 1 cm = 10 mm",
+          "info": true
+        },
+        {
+          "display": "Wachstum = ? Millimeter",
+          "info": false
+        }
+      ],
+      "fragments": [
+        {
+          "label": "Messung A",
+          "text": "Du kennst die frühe Grösse: Am Ende des 2. Monats ist der Embryo erst 4 cm gross."
+        },
+        {
+          "label": "Messung B",
+          "text": "Du kennst die spätere Grösse: Im 4. Monat misst der Fötus 7,5 cm vom Scheitel bis zum Steiss."
+        }
+      ],
+      "hints": [
+        "Sagt euch zuerst gegenseitig eure beiden Grössen.",
+        "Zieht die kleinere Grösse von der grösseren ab – beide sind in Zentimetern.",
+        "Erst rechnen, dann von Zentimetern in Millimeter umwandeln."
+      ],
+      "solution": "35"
+    }
+  },
+  {
+    "id": "s7",
+    "title": "Die Entwicklung in der richtigen Reihenfolge",
+    "roomEmoji": "🔀",
+    "storyIntro": "Sechs Ereignisse aus der Entwicklung sind durcheinandergeraten. Jedes Teammitglied kennt nur einige Zeitpunkte – bringt sie gemeinsam in die richtige Reihenfolge!",
+    "storySuccess": "Perfekt – die Entwicklung läuft genau so ab!",
+    "puzzle": {
+      "type": "sorting",
+      "solutionType": "order",
+      "collaborative": true,
+      "description": "Ordnet die Ereignisse vom FRÜHESTEN zum SPÄTESTEN. Die Wochenangaben fehlen mit Absicht – ihr müsst sie aus euren Fragmenten zusammentragen!",
+      "items": [
+        {
+          "id": "i1",
+          "display": "Das Herz beginnt zu schlagen und pumpt Blut",
+          "emoji": "❤️"
+        },
+        {
+          "id": "i2",
+          "display": "Alle Organe sind angelegt – aus dem Embryo wird ein Fötus",
+          "emoji": "🫀"
+        },
+        {
+          "id": "i3",
+          "display": "Die äusseren Geschlechtsorgane werden unterscheidbar",
+          "emoji": "🚻"
+        },
+        {
+          "id": "i4",
+          "display": "Die Mutter spürt die ersten Bewegungen des Kindes",
+          "emoji": "👋"
+        },
+        {
+          "id": "i5",
+          "display": "Das Gehör ist voll ausgebildet, die Augen öffnen sich",
+          "emoji": "👂"
+        },
+        {
+          "id": "i6",
+          "display": "Der Kopf des Kindes senkt sich ins Becken der Mutter",
+          "emoji": "🤰"
+        }
+      ],
+      "correctOrder": [
+        "i1",
+        "i2",
+        "i3",
+        "i4",
+        "i5",
+        "i6"
+      ],
+      "fragments": [
+        {
+          "label": "Wissen A",
+          "text": "Du weisst sicher: Das Herz schlägt schon ab der 3. Woche. Alle Organe sind nach etwa 8 Wochen angelegt (Ende 2. Monat)."
+        },
+        {
+          "label": "Wissen B",
+          "text": "Du weisst sicher: Ab der 14. Woche sind die Geschlechtsorgane unterscheidbar. Ab der 22. Woche spürt die Mutter erste Bewegungen."
+        },
+        {
+          "label": "Wissen C",
+          "text": "Du weisst sicher: Im 6. Monat ist das Gehör fertig und die Augen öffnen sich. Erst wenige Wochen vor der Geburt senkt sich der Kopf ins Becken."
+        }
+      ],
+      "hints": [
+        "Was passiert zuerst – das Herz schlagen oder das Hören?",
+        "Bewegungen spürt die Mutter erst relativ spät.",
+        "Das Senken des Kopfes gehört ganz ans Ende, kurz vor die Geburt."
+      ]
+    }
+  },
+  {
+    "id": "s8",
+    "title": "Der Tresor der Zahlen",
+    "roomEmoji": "🗣️",
+    "storyIntro": "Ein vierstelliger Code sichert den Tresor. Jede Karte steckt eine andere Zahl aus dem Film – nur wenn ihr sie in der richtigen Reihenfolge zusammensagt, öffnet er sich.",
+    "storySuccess": "Der Tresor springt auf – starke Teamarbeit!",
+    "puzzle": {
+      "type": "collaborative",
+      "collaborative": true,
+      "solutionType": "text",
+      "description": "Findet den 4-stelligen Code. Jede/r kennt eine Ziffer – sagt euch die Ergebnisse in der richtigen Reihenfolge an!",
+      "fragments": [
+        {
+          "label": "Karte A",
+          "text": "1. Ziffer: Wie viele Spermien befruchten die Eizelle am Ende? Schreibt die Anzahl."
+        },
+        {
+          "label": "Karte B",
+          "text": "2. Ziffer: Nach wie vielen Tagen erreicht der Keim die Gebärmutter und beginnt sich einzunisten?"
+        },
+        {
+          "label": "Karte C",
+          "text": "3. Ziffer: Ende welchen Monats spricht man nicht mehr von Embryo, sondern von Fötus?"
+        },
+        {
+          "label": "Karte D",
+          "text": "4. Ziffer: Ab welcher Woche nach der Befruchtung beginnt das Herz zu schlagen?"
+        }
+      ],
+      "solution": "1523",
+      "hints": [
+        "Jede Karte ergibt genau eine Ziffer – tragt sie von der 1. bis zur 4. zusammen.",
+        "Denkt an die ganz genauen Zahlen aus dem Film, nicht an Schätzungen.",
+        "Die Reihenfolge der Ziffern steht auf den Karten selbst."
+      ]
+    }
+  },
+  {
+    "id": "s9",
+    "title": "Die verschlüsselte Botschaft",
+    "roomEmoji": "🔐",
+    "storyIntro": "Auf einer alten Tafel steht ein verschlüsseltes Fachwort. Niemand kennt allein, wie die Verschlüsselung funktioniert – tauscht eure Hinweise aus und entschlüsselt gemeinsam!",
+    "storySuccess": "Entschlüsselt – das Wort war der Schlüssel!",
+    "puzzle": {
+      "type": "cipher",
+      "solutionType": "text",
+      "collaborative": true,
+      "description": "Entschlüsselt das geheime Fachwort. Die nötigen Infos zur Entschlüsselung sind auf das Team verteilt!",
+      "cipherText": "WSHGLUAH",
+      "clueText": "Eine alte Botschaft – Cäsar hat hier seine Finger im Spiel. Jeder kennt nur einen Teil, redet!",
+      "fragments": [
+        {
+          "label": "Hinweis A",
+          "text": "Du erkennst: Es ist eine Cäsar-Verschlüsselung – jeder Buchstabe wurde um die gleiche Zahl an Stellen verschoben."
+        },
+        {
+          "label": "Hinweis B",
+          "text": "Du kennst die Verschiebung: Es sind genau 7 Stellen nach vorne (aus A wird H). Verschiebt zum Entschlüsseln also 7 zurück."
+        },
+        {
+          "label": "Hinweis C",
+          "text": "Du kennst die Bedeutung: Gesucht ist der Fachbegriff für den Mutterkuchen, der das Kind über das Blut versorgt."
+        }
+      ],
+      "hints": [
+        "Ohne alle drei Fragmente fehlt euch die Verschiebung – sammelt sie zuerst ein.",
+        "Verschiebt jeden Buchstaben rückwärts im Alphabet.",
+        "Gesucht ist ein Organ, kein Vorgang."
+      ],
+      "solution": "PLAZENTA"
+    }
+  },
+  {
+    "id": "s10",
+    "title": "Das letzte Tor – Wahr oder Falsch",
+    "roomEmoji": "🏆",
+    "storyIntro": "Das letzte Tor! Nur wer ALLE wahren Aussagen über die Geburt erkennt, entkommt. Jede/r kennt sicheres Wissen zu anderen Aussagen – beratet euch gut, ein falsches Häkchen und das Tor bleibt zu!",
+    "storySuccess": "IHR SEID FREI! Ein neuer Mensch ist geboren – herzlichen Glückwunsch, ihr habt es geschafft!",
+    "puzzle": {
+      "type": "elimination",
+      "subtype": "select_all",
+      "solutionType": "multi_select",
+      "collaborative": true,
+      "description": "Wählt ALLE wahren Aussagen über Geburt und Neugeborenes aus – und nur die wahren!",
+      "options": [
+        {
+          "id": "o1",
+          "display": "Bei der Geburt wird das Kind mit dem Kopf voran gegen den Gebärmutterhals gedrückt",
+          "correct": true
+        },
+        {
+          "id": "o2",
+          "display": "Mit dem ersten tiefen Atemzug schliesst sich ein Loch zwischen den Vorhöfen im Herzen",
+          "correct": true
+        },
+        {
+          "id": "o3",
+          "display": "Die Käseschmiere schützt die empfindliche Haut des Neugeborenen",
+          "correct": true
+        },
+        {
+          "id": "o4",
+          "display": "Alkohol kann über Plazenta und Nabelschnur zum Kind gelangen",
+          "correct": true
+        },
+        {
+          "id": "o5",
+          "display": "Das Durchschneiden der Nabelschnur ist für das Kind sehr schmerzhaft",
+          "correct": false
+        },
+        {
+          "id": "o6",
+          "display": "Schon in der Eröffnungsphase wird das Kind mit Presswehen herausgedrückt",
+          "correct": false
+        },
+        {
+          "id": "o7",
+          "display": "Eine Geburt darf niemals von einer Hebamme allein betreut werden",
+          "correct": false
+        },
+        {
+          "id": "o8",
+          "display": "In den letzten vier Wochen vor der Geburt wächst der Fötus besonders stark",
+          "correct": false
+        }
+      ],
+      "fragments": [
+        {
+          "label": "Notiz A",
+          "text": "Du weisst sicher: Das Durchtrennen der Nabelschnur tut weder Kind noch Mutter weh. Und: In den letzten vier Wochen wächst der Fötus kaum noch – er lagert vor allem Fett ein."
+        },
+        {
+          "label": "Notiz B",
+          "text": "Du weisst sicher: Zuerst kommt die Eröffnungsphase (der Muttermund dehnt sich), erst danach die Austreibungsphase mit den Presswehen."
+        },
+        {
+          "label": "Notiz C",
+          "text": "Du weisst sicher: Eine Hebamme kann eine Geburt auch allein betreuen, z. B. im Geburtshaus. Und: Die Käseschmiere schützt die Haut des Babys."
+        }
+      ],
+      "hints": [
+        "Verwechselt Eröffnungs- und Austreibungsphase nicht – in welcher wird gepresst?",
+        "Überlegt: Tut das Durchschneiden der Nabelschnur wirklich weh?",
+        "Muss bei jeder Geburt zwingend ein Arzt dabei sein?"
+      ]
+    }
+  }
+]
