@@ -608,6 +608,7 @@
         const eqs=(p.equations||[]).map(eq=>`<div class="emoji-eq ${eq.info?'':'question'}">${esc(eq.display)}</div>`).join('');
         return `
             <div class="puzzle-desc">${esc(p.description)}</div>
+            ${renderFragments(data)}
             <div class="emoji-equations">${eqs}</div>
             <div class="answer-section">
                 <input type="text" class="answer-input" id="answerInput" placeholder="?" autocomplete="off" inputmode="numeric">
